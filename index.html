@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hein Htet Soe — Portfolio</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- AOS for animations -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="script.js"></script>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">Hein Htet Soe</div>
+      <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#portfolio">Portfolio</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Hein Htet Soe</h1>
+      <p>Creative Developer | Designer | Freelancer</p>
+      <a href="#portfolio" class="cta-button">View My Work</a>
+    </div>
+  </section>
+  
+
+  <!-- Portfolio -->
+  <section id="portfolio" class="portfolio">
+    <h2 data-aos="fade-up">My Work</h2>
+    <div class="portfolio-grid">
+      <div class="project" data-aos="zoom-in">
+        <img src="TDL.png" alt="To Do List" />
+        <h3>Project 1</h3>
+        <p>To do list web app</p>
+        <a href="https://github.com/callmeHeinHtet/my-first-todolist" class="project-link">View Details</a>
+      </div>
+      <div class="project" data-aos="zoom-in" data-aos-delay="100">
+        <img src="Chatbot.png" alt="Chatbot" />
+        <h3>Project 2</h3>
+        <p>Library Webiste and Chatbot for Rangsit University</p>
+        <a href="https://github.com/callmeHeinHtet/librarybot" class="project-link">View Details</a>
+      </div>
+      <div class="project" data-aos="zoom-in" data-aos-delay="200">
+        <img src="hotelbooking.png" alt="hotelbooking" />
+        <h3>Project 3</h3>
+        <p>A hotel booking app which is still in testing phase</p>
+        <a href="https://github.com/callmeHeinHtet/Hotelbookingtesting" class="project-link">View Details</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="about">
+    <h2 data-aos="fade-up">About Me</h2>
+    <div class="about-container" data-aos="fade-up" data-aos-delay="100">
+      <img src="profile.jpg" alt="Your Photo" class="profile-img" />
+      <div class="about-text">
+        <p>Hello! I'm a passionate developer and designer with experience in web and app development.
+             I love creating visually appealing, user-friendly websites.</p>
+        <h3>Skills</h3>
+        <ul class="skills-list">
+          <li>HTML & CSS</li>
+          <li>JavaScript</li>
+          <li>Python & Java</li>
+          <li>UI/UX Design</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <!-- Contact Section -->
+<section id="contact" class="contact">
+    <h2>Contact Me</h2>
+    <p>Let's work together! Fill out the form below, and I'll get back to you.</p>
+  
+    <div class="contact-wrapper">
+      <form id="contact-form" class="contact-form">
+        <div class="input-row">
+          <input type="text" name="name" placeholder="Your Name" required>
+          <input type="email" name="email" placeholder="Your Email" required>
+        </div>
+        <input type="text" name="subject" placeholder="Subject" required>
+        <textarea name="message" placeholder="Your Message" required></textarea>
+        <button type="submit" class="send-btn">Send Message</button>
+      </form>
+    </div>
+  
+    <div class="social-icons">
+      <a href="#"><i class="fab fa-facebook"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-linkedin"></i></a>
+    </div>
+</section>
+  
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Hein Htet Soe. All Rights Reserved.</p>
+  </footer>
+
+  <!-- AOS JS -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>AOS.init();</script>
+</body>
+</html>
