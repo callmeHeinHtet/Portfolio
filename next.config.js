@@ -5,16 +5,13 @@ const nextConfig = {
     unoptimized: true,
     loader: 'default',
     path: '',
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'github.com',
-      },
-    ],
+    domains: ['github.com'],
   },
   reactStrictMode: true,
   basePath: process.env.NODE_ENV === 'production' ? '/Portfolio' : '',
   assetPrefix: process.env.NODE_ENV === 'production' ? '/Portfolio' : '',
+  trailingSlash: true,
+  distDir: 'out',
 }
 
 module.exports = nextConfig 
