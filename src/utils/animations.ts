@@ -33,13 +33,14 @@ export const textReveal = (element: Element, delay = 0) => {
 export const staggerChildren = (
   parent: Element,
   stagger = 0.2,
-  from: gsap.TweenVars = { y: 50, opacity: 0 }
+  from = { y: 50, opacity: 0 }
 ) => {
   return gsap.from(parent.children, {
-    ...from,
     duration: 1,
     stagger,
     ease: 'power4.out',
+    y: from.y,
+    opacity: from.opacity,
   })
 }
 
