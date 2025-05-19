@@ -2,7 +2,7 @@
 2:HL["/Portfolio/_next/static/media/a34f9d1faa5f3315-s.p.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 3:HL["/Portfolio/_next/static/media/bb3ef058b751a6ad-s.p.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 4:HL["/Portfolio/_next/static/css/e5ccad1c729be0a7.css","style",{"crossOrigin":""}]
-0:["Hi5F6ryFC4vh8BzdB_kIK",[[["",{"children":["__PAGE__",{}]},"$undefined","$undefined",true],"$L5",[[["$","link","0",{"rel":"stylesheet","href":"/Portfolio/_next/static/css/e5ccad1c729be0a7.css","precedence":"next","crossOrigin":""}]],"$L6"]]]]
+0:["AHubDGKsMv59b4Pga7cUy",[[["",{"children":["__PAGE__",{}]},"$undefined","$undefined",true],"$L5",[[["$","link","0",{"rel":"stylesheet","href":"/Portfolio/_next/static/css/e5ccad1c729be0a7.css","precedence":"next","crossOrigin":""}]],"$L6"]]]]
 7:I[6954,[],""]
 8:I[7264,[],""]
 a:I[8297,[],""]
