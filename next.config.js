@@ -1,12 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  basePath: '/Portfolio',
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '/Portfolio',
+  assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH || '/Portfolio',
   images: {
     unoptimized: true,
+    domains: ['github.com'],
   },
-  assetPrefix: '/Portfolio/',
   trailingSlash: true,
+  reactStrictMode: true,
 }
 
 module.exports = nextConfig 
