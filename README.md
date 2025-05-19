@@ -21,7 +21,9 @@ A modern, interactive portfolio website built with Next.js, TypeScript, and GSAP
 - Tailwind CSS
 - Three.js with React Three Fiber
 - Framer Motion
-- Lenis for smooth scrolling
+
+## Visit the Website
+The portfolio is deployed at: [https://callmeheinhtet.github.io/Portfolio](https://callmeheinhtet.github.io/Portfolio)
 
 ## Getting Started
 
