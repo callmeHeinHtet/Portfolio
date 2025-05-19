@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import type { MotionProps } from 'framer-motion';
 import { IoClose } from 'react-icons/io5';
 import { RiRobot2Fill } from 'react-icons/ri';
 import { FiSend } from 'react-icons/fi';
@@ -10,19 +11,33 @@ interface Message {
   timestamp: Date;
 }
 
-const TypingIndicator = () => (
+interface AnimatedDivProps extends MotionProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+interface AnimatedButtonProps extends MotionProps {
+  className?: string;
+  children?: React.ReactNode;
+  onClick?: () => void;
+}
+
+const MotionDiv = motion.div as React.FC<AnimatedDivProps>;
+const MotionButton = motion.button as React.FC<AnimatedButtonProps>;
+
+const TypingIndicator: React.FC = () => (
   <div className="flex space-x-2 p-3 bg-[#2A2A2A] rounded-lg max-w-[100px]">
-    <motion.div
+    <MotionDiv
       className="w-2 h-2 bg-[#FF3366] rounded-full"
       animate={{ y: [0, -5, 0] }}
       transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
     />
-    <motion.div
+    <MotionDiv
       className="w-2 h-2 bg-[#FF3366] rounded-full"
       animate={{ y: [0, -5, 0] }}
       transition={{ duration: 0.5, delay: 0.2, repeat: Infinity, repeatType: "reverse" }}
     />
-    <motion.div
+    <MotionDiv
       className="w-2 h-2 bg-[#FF3366] rounded-full"
       animate={{ y: [0, -5, 0] }}
       transition={{ duration: 0.5, delay: 0.4, repeat: Infinity, repeatType: "reverse" }}
@@ -30,7 +45,7 @@ const TypingIndicator = () => (
   </div>
 );
 
-const RobotCompanion = () => {
+const RobotCompanion: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -197,8 +212,8 @@ const RobotCompanion = () => {
   return (
     <div className="fixed bottom-4 right-4 z-50">
       <AnimatePresence>
-        {isOpen && (
-          <motion.div
+        {isOpen ? (
+          <MotionDiv
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -227,7 +242,7 @@ const RobotCompanion = () => {
             {/* Chat Messages */}
             <div className="h-[400px] overflow-y-auto p-4 space-y-4 bg-[#111111]">
               {messages.map((msg, index) => (
-                <motion.div
+                <MotionDiv
                   key={index}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -249,16 +264,16 @@ const RobotCompanion = () => {
                       {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                </motion.div>
+                </MotionDiv>
               ))}
               {isThinking && (
-                <motion.div
+                <MotionDiv
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="flex justify-start"
                 >
                   <TypingIndicator />
-                </motion.div>
+                </MotionDiv>
               )}
               <div ref={chatEndRef} />
             </div>
@@ -283,12 +298,11 @@ const RobotCompanion = () => {
                 </button>
               </div>
             </form>
-          </motion.div>
-        )}
+          </MotionDiv>
+        ) : null}
       </AnimatePresence>
 
-      {/* Chat Button */}
-      <motion.button
+      <MotionButton
         onClick={() => setIsOpen(!isOpen)}
         className="bg-[#1A1A1A] w-14 h-14 rounded-full flex items-center justify-center hover:bg-[#2A2A2A] transition-colors shadow-lg border border-[#2A2A2A] relative group"
         whileHover={{ scale: 1.05 }}
@@ -298,7 +312,7 @@ const RobotCompanion = () => {
           <RiRobot2Fill className="w-7 h-7 text-[#FF3366]" />
           <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-[#1A1A1A]" />
         </div>
-      </motion.button>
+      </MotionButton>
     </div>
   );
 };
