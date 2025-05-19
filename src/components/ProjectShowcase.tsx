@@ -41,13 +41,14 @@ export default function ProjectShowcase({ projects }: ProjectShowcaseProps) {
               key={project.title}
               className="group relative bg-[#1A1A1A] rounded-lg overflow-hidden"
             >
-              <div className="aspect-video">
+              <div className="aspect-video relative">
                 <Image
                   src={project.image || getPlaceholderImage(project.title)}
                   alt={project.title}
-                  width={600}
-                  height={400}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  priority
                 />
               </div>
               <div className="p-6">

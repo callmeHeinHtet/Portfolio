@@ -3,7 +3,12 @@ const nextConfig = {
   output: 'export',
   images: {
     unoptimized: true,
-    domains: ['github.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'github.com',
+      },
+    ],
   },
   reactStrictMode: true,
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
