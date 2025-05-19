@@ -2,9 +2,6 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { IoClose } from 'react-icons/io5';
-import { RiRobot2Fill } from 'react-icons/ri';
-import { FiSend } from 'react-icons/fi';
 
 interface Message {
   type: 'user' | 'bot';
@@ -81,6 +78,24 @@ const TypingIndicator = () => (
     />
   </div>
 )
+
+const RobotIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+    <path d="M12 2a2 2 0 012 2c0 .74-.4 1.38-1 1.72V7h2a7 7 0 017 7v2a1 1 0 11-2 0v-2a5 5 0 00-5-5H9a5 5 0 00-5 5v2a1 1 0 11-2 0v-2a7 7 0 017-7h2V5.72c-.6-.34-1-.98-1-1.72a2 2 0 012-2M9 17a1 1 0 011-1h4a1 1 0 110 2h-4a1 1 0 01-1-1m-4-3a2 2 0 110 4 2 2 0 010-4m14 0a2 2 0 110 4 2 2 0 010-4z"/>
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+  </svg>
+);
+
+const SendIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+  </svg>
+);
 
 const RobotCompanion = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -209,7 +224,7 @@ const RobotCompanion = () => {
             onClick={() => setIsOpen(true)}
             className="bg-[#FF3366] p-4 rounded-full shadow-lg hover:shadow-xl transition-shadow"
           >
-            <RiRobot2Fill className="w-6 h-6 text-white" />
+            <RobotIcon />
           </motion.button>
         )}
 
@@ -224,7 +239,9 @@ const RobotCompanion = () => {
             <div className="bg-[#1A1A1A] p-4 flex items-center justify-between border-b border-[#2A2A2A]">
               <div className="flex items-center space-x-3">
                 <div className="relative">
-                  <RiRobot2Fill className="w-8 h-8 text-[#FF3366]" />
+                  <div className="w-8 h-8 text-[#FF3366]">
+                    <RobotIcon />
+                  </div>
                   <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-[#1A1A1A]" />
                 </div>
                 <div>
@@ -236,7 +253,7 @@ const RobotCompanion = () => {
                 onClick={() => setIsOpen(false)}
                 className="text-gray-400 hover:text-white transition-colors"
               >
-                <IoClose className="w-6 h-6" />
+                <CloseIcon />
               </button>
             </div>
 
@@ -295,7 +312,7 @@ const RobotCompanion = () => {
                   disabled={!inputValue.trim()}
                   className="bg-[#FF3366] text-white p-2 rounded-full hover:bg-[#FF4D7D] transition-colors focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:ring-offset-2 focus:ring-offset-[#1A1A1A] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <FiSend className="w-5 h-5" />
+                  <SendIcon />
                 </button>
               </div>
             </form>
