@@ -11,6 +11,7 @@ import RobotCompanion from '@/components/RobotCompanion'
 import About from '@/components/About'
 import Contact from '@/components/Contact'
 import { projects } from '@/data/projects'
+import { getImagePath } from '@/utils/imageLoader'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -138,7 +139,7 @@ export default function Home() {
               <div className="mb-8 transform hover:scale-105 transition-transform duration-300">
                 <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-accent/20 shadow-lg shadow-accent/20">
                   <img 
-                    src="/profile.jpg" 
+                    src={getImagePath('/profile.jpg')}
                     alt="Hein Htet Soe" 
                     className="w-full h-full object-cover"
                   />
