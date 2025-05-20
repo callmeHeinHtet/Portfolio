@@ -1,10 +1,9 @@
 'use client'
 
 import { useRef, useEffect } from 'react'
-import Image from 'next/image'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { getImagePath } from '@/utils/imageLoader'
+import { Image } from '@/components/Image'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -79,7 +78,7 @@ const ProjectShowcase = ({ projects }: ProjectShowcaseProps) => {
               }`}>
                 <div className="relative aspect-video overflow-hidden group-hover:scale-105 transition-transform duration-500">
                   <Image
-                    src={getImagePath(project.image)}
+                    src={project.image}
                     alt={project.title}
                     fill
                     className="object-cover"
