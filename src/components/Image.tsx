@@ -13,7 +13,11 @@ interface ImageProps {
 export const Image = ({ src, alt, className, fill, width, height }: ImageProps) => {
   // Remove any leading slash and combine with BASE_PATH
   const cleanSrc = src.startsWith('/') ? src.slice(1) : src;
-  const fullPath = `${BASE_PATH}/${cleanSrc}`;
+  
+  // In production, prepend the base path
+  const fullPath = process.env.NODE_ENV === 'production'
+    ? `${BASE_PATH}/static/images/${cleanSrc}`
+    : `/${cleanSrc}`;
 
   return (
     <NextImage
