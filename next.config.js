@@ -1,15 +1,18 @@
 /** @type {import('next').NextConfig} */
+const isProduction = process.env.NODE_ENV === 'production';
+const basePath = isProduction ? '/Portfolio' : '';
+
 const nextConfig = {
   output: 'export',
   images: {
     unoptimized: true,
     loader: 'default',
-    path: '',
+    path: basePath,
     domains: ['github.com'],
   },
   reactStrictMode: true,
-  basePath: process.env.NODE_ENV === 'production' ? '/Portfolio' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/Portfolio/' : '',
+  basePath: basePath,
+  assetPrefix: isProduction ? '/Portfolio/' : '',
   trailingSlash: true,
   distDir: 'out',
 }
