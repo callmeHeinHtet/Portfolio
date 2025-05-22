@@ -1,4 +1,5 @@
 import NextImage from 'next/image';
+import { ASSET_PREFIX } from '@/utils/constants';
 
 interface ImageProps {
   src: string;
@@ -10,15 +11,19 @@ interface ImageProps {
 }
 
 export const Image = ({ src, alt, className, fill, width, height }: ImageProps) => {
+  // Handle both absolute URLs and relative paths
+  const imageSrc = src.startsWith('http') ? src : `${ASSET_PREFIX}${src}`;
+
   return (
     <NextImage
-      src={src}
+      src={imageSrc}
       alt={alt}
       className={className}
       fill={fill}
       width={width}
       height={height}
-      unoptimized // Since we're using static export
+      unoptimized // Required for static export
+      priority // Load images immediately
     />
   );
 }; 
