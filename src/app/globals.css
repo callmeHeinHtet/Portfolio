@@ -23,6 +23,7 @@
 
   body {
     @apply overflow-x-hidden bg-gradient-to-b from-primary to-[#141414];
+    will-change: transform;
   }
 
   .light-mode body {
@@ -38,11 +39,15 @@
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-accent via-accent-dark to-accent;
     background-size: 200% auto;
-    animation: shine 8s linear infinite;
+    will-change: background-position;
   }
 
   .btn {
-    @apply px-8 py-3 rounded-full font-medium relative overflow-hidden transition-all duration-300;
+    @apply px-8 py-3 rounded-full font-medium relative overflow-hidden;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
   }
 
   .btn-primary {
@@ -62,7 +67,9 @@
   }
 
   .hover-link::after {
-    @apply content-[''] absolute left-0 bottom-0 w-0 h-[2px] bg-accent transition-all duration-300;
+    @apply content-[''] absolute left-0 bottom-0 w-0 h-[2px] bg-accent;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: width;
   }
 
   .hover-link:hover::after {
@@ -70,7 +77,11 @@
   }
 
   .card {
-    @apply bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 transition-all duration-300;
+    @apply bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
   }
 
   .light-mode .card {
@@ -85,39 +96,10 @@
     @apply border-accent/40 shadow-accent/10;
   }
 
-  /* Animated background gradient */
-  .animated-gradient {
-    @apply absolute inset-0 -z-10;
-    background: linear-gradient(
-      45deg,
-      rgba(var(--accent), 0.1),
-      rgba(var(--accent-dark), 0.1),
-      rgba(var(--accent), 0.1)
-    );
-    background-size: 200% 200%;
-    animation: gradient 15s ease infinite;
-  }
-
-  /* Floating animation for elements */
-  .float {
-    animation: float 6s ease-in-out infinite;
-  }
-
-  /* Section transitions */
-  .section-fade-in {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-  }
-
-  .section-fade-in.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
   /* Form styles */
   .form-input {
     @apply w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-accent;
+    transition: border-color 0.2s ease-in-out;
   }
 
   .light-mode .form-input {
@@ -126,7 +108,8 @@
 
   /* Social links */
   .social-link {
-    @apply p-3 bg-white/5 rounded-full text-secondary hover:text-accent hover:bg-white/10 transition-colors;
+    @apply p-3 bg-white/5 rounded-full text-secondary hover:text-accent hover:bg-white/10;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
   }
 
   .light-mode .social-link {
@@ -134,35 +117,54 @@
   }
 }
 
-@keyframes shine {
-  0% {
-    background-position: 0% center;
-  }
-  100% {
-    background-position: 200% center;
-  }
+/* TestDome Certificate Styles */
+.testdome-certificate-stamp {
+    position: relative;
+    display: inline-block;
+    padding: 2rem;
+    width: 200px;
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 0 5px rgba(0,0,0,0.15);
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    color: #333;
+    text-align: center;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
 }
 
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+.testdome-certificate-stamp:hover {
+    transform: scale(1.05) translateZ(0);
 }
 
-@keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
-} 
+.testdome-certificate-stamp * {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.testdome-certificate-stamp .testdome-certificate-name {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.testdome-certificate-stamp .testdome-certificate-test-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.testdome-certificate-stamp .testdome-certificate-card-logo {
+    font-size: 0.8rem;
+    line-height: 1.2;
+}
+
+.testdome-certificate-stamp.silver {
+    background: linear-gradient(45deg, #f0f0f0, #ffffff);
+    border: 1px solid #e0e0e0;
+}
+
+/* Add the external TestDome styles */
+@import url('https://www.testdome.com/content/certificates/embed.css'); 

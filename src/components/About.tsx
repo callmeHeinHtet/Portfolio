@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { useScrollAnimation } from '@/hooks/useScrollAnimation'
+import { useInView } from 'react-intersection-observer'
 import Image from 'next/image'
 
 const skills = [
@@ -14,18 +14,20 @@ const skills = [
 ]
 
 const About = () => {
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  useScrollAnimation(containerRef, {
-    from: { y: 100, opacity: 0 },
-    start: 'top center+=100',
-    end: 'center center',
+  const { ref: containerRef, inView } = useInView({
+    threshold: 0.1,
+    triggerOnce: true
   })
 
   return (
     <section id="about" className="py-20 bg-[#111111]">
       <div className="container">
-        <div ref={containerRef} className="max-w-4xl mx-auto">
+        <div 
+          ref={containerRef} 
+          className={`max-w-4xl mx-auto transform transition-all duration-700 ${
+            inView ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+          }`}
+        >
           <h2 className="text-5xl font-display mb-16 text-accent text-center">
             About Me
           </h2>
@@ -60,17 +62,25 @@ const About = () => {
             <div className="space-y-6">
               <h3 className="text-2xl font-display text-white mb-6">Skills</h3>
               <div className="space-y-4">
-                {skills.map((skill) => (
-                  <div key={skill.name} className="space-y-2">
+                {skills.map((skill, index) => (
+                  <div 
+                    key={skill.name} 
+                    className={`space-y-2 transform transition-all duration-500 delay-${index * 100}`}
+                    style={{
+                      transitionDelay: `${index * 100}ms`,
+                      opacity: inView ? 1 : 0,
+                      transform: inView ? 'translateX(0)' : 'translateX(-20px)'
+                    }}
+                  >
                     <div className="flex justify-between text-sm">
                       <span className="text-secondary">{skill.name}</span>
                       <span className="text-accent">{skill.level}%</span>
                     </div>
                     <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                       <div
-                        className="h-full rounded-full transition-all duration-1000 ease-out"
+                        className="h-full rounded-full transition-transform duration-1000 ease-out"
                         style={{
-                          width: `${skill.level}%`,
+                          width: inView ? `${skill.level}%` : '0%',
                           backgroundColor: skill.color,
                         }}
                       />
@@ -78,6 +88,25 @@ const About = () => {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+
+          {/* Certificates */}
+          <div 
+            className={`mt-16 transform transition-all duration-700 delay-500 ${
+              inView ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+            }`}
+          >
+            <h3 className="text-2xl font-display text-white mb-6">Certificates</h3>
+            <div className="flex flex-wrap gap-6 justify-center">
+              <a href="https://www.testdome.com/certificates/66c7baf2df5441a7b5fddd4e9aa33411" 
+                 className="testdome-certificate-stamp silver"
+                 target="_blank"
+                 rel="noopener noreferrer">
+                <span className="testdome-certificate-name">Hein Htet Soe</span>
+                <span className="testdome-certificate-test-name">Web Developer</span>
+                <span className="testdome-certificate-card-logo">TestDome<br/>Certificate</span>
+              </a>
             </div>
           </div>
         </div>
