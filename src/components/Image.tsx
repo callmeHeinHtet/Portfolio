@@ -12,7 +12,9 @@ interface ImageProps {
 
 export const Image = ({ src, alt, className, fill, width, height }: ImageProps) => {
   // Handle both absolute URLs and relative paths
-  const imageSrc = src.startsWith('http') ? src : `${ASSET_PREFIX}${src}`;
+  const imageSrc = src.startsWith('http') 
+    ? src 
+    : `${process.env.NODE_ENV === 'production' ? '/Portfolio' : ''}/${src}`;
 
   return (
     <NextImage
