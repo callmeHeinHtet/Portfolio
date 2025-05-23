@@ -15,8 +15,8 @@ export const Image = ({ src, alt, className, fill, width, height }: ImageProps) 
   const imageSrc = src.startsWith('http') 
     ? src 
     : process.env.NODE_ENV === 'production'
-      ? `/Portfolio/${src}`
-      : `/${src}`;
+      ? `/Portfolio${src.startsWith('/') ? src : `/${src}`}`
+      : src.startsWith('/') ? src : `/${src}`;
 
   return (
     <NextImage
