@@ -55,7 +55,3 @@ src/
 - `npm run build` - Build for production
 - `npm start` - Start production server
 - `npm run lint` - Run ESLint
-
-## License
-
-ISC 
