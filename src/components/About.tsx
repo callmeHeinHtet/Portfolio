@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { Image } from '@/components/Image'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -106,10 +107,11 @@ const About = () => {
           <div className="about-image relative">
             {/* Image container with border effect */}
             <div className="relative aspect-[4/5] overflow-hidden">
-              <img
+              <Image
                 src="/images/profile.jpg"
                 alt="Hein Htet Soe"
-                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                fill
+                className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
               />
               {/* Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent opacity-40" />
