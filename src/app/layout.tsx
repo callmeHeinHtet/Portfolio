@@ -1,8 +1,6 @@
 import type { Metadata } from 'next'
 import { Archivo_Black, Outfit, JetBrains_Mono } from 'next/font/google'
 import Navbar from '@/components/Navbar'
-import CustomCursor from '@/components/CustomCursor'
-import CommandPalette from '@/components/CommandPalette'
 import './globals.css'
 
 // Archivo Black - Bold geometric display font
@@ -48,12 +46,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${archivoBlack.variable} ${outfit.variable} ${jetBrainsMono.variable} font-sans bg-cream text-ink antialiased`}>
-        {/* Custom cursor - desktop only */}
-        <CustomCursor />
-
-        {/* Command palette - Cmd+K */}
-        <CommandPalette />
-
         {/* Subtle grid overlay */}
         <div className="grid-overlay" aria-hidden="true" />
 
