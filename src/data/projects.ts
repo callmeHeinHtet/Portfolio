@@ -30,7 +30,8 @@ export const projects: Project[] = [
       'Streamlined booking flow',
       'Real-time availability updates'
     ],
-    link: 'https://github.com/callmeHeinHtet/hotelbookingtesting',
+    link: 'https://callmeheinhtet.github.io/hotelbookingtesting/',
+    demo: 'https://callmeheinhtet.github.io/hotelbookingtesting/',
     github: 'https://github.com/callmeHeinHtet/hotelbookingtesting',
     category: 'mobile',
     status: 'completed'
