@@ -1,189 +1,400 @@
 'use client'
 
-import { useRef, useState } from 'react'
-import { useScrollAnimation } from '@/hooks/useScrollAnimation'
+import { useEffect, useRef, useState } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import emailjs from '@emailjs/browser'
+
+gsap.registerPlugin(ScrollTrigger)
+
+const socialLinks = [
+  {
+    name: 'GitHub',
+    handle: '@callmeHeinHtet',
+    href: 'https://github.com/callmeHeinHtet',
+  },
+  {
+    name: 'LinkedIn',
+    handle: 'Hein Htet Soe',
+    href: 'https://www.linkedin.com/in/hein-htet-soe-2015b334b/',
+  },
+  {
+    name: 'LINE',
+    handle: '@callmeero81',
+    href: 'https://line.me/ti/p/~callmeero81',
+  },
+]
 
 const Contact = () => {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [formData, setFormData] = useState({
+  const sectionRef = useRef<HTMLDivElement>(null)
+  const [formState, setFormState] = useState({
     name: '',
     email: '',
     message: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [focusedField, setFocusedField] = useState<string | null>(null)
 
-  useScrollAnimation(containerRef, {
-    from: { y: 100, opacity: 0 },
-    start: 'top center+=100',
-    end: 'center center',
-  })
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Large headline reveal
+      gsap.from('.contact-headline', {
+        y: 100,
+        opacity: 0,
+        duration: 1.2,
+        ease: 'expo.out',
+        scrollTrigger: {
+          trigger: '.contact-headline',
+          start: 'top 85%',
+        },
+      })
+
+      // Stagger reveal for content
+      gsap.from('.contact-content > *', {
+        y: 50,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: 'expo.out',
+        scrollTrigger: {
+          trigger: '.contact-content',
+          start: 'top 85%',
+        },
+      })
+
+      // Form field reveals
+      gsap.from('.form-field', {
+        y: 40,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: 'expo.out',
+        scrollTrigger: {
+          trigger: '.contact-form',
+          start: 'top 85%',
+        },
+      })
+
+      // Social links stagger
+      gsap.from('.social-link', {
+        x: -30,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: 'expo.out',
+        scrollTrigger: {
+          trigger: '.social-links',
+          start: 'top 90%',
+        },
+      })
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    setSubmitStatus('idle')
 
     try {
-      // Here you would typically send the form data to your backend
-      // For now, we'll simulate a successful submission
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      setSubmitStatus('success')
-      setFormData({ name: '', email: '', message: '' })
+      const result = await emailjs.send(
+        'service_tnfcuie',
+        'template_too8tx7',
+        {
+          to_name: 'Hein Htet Soe',
+          from_name: formState.name,
+          from_email: formState.email,
+          reply_to: formState.email,
+          message: formState.message,
+          user_name: formState.name,
+          user_email: formState.email,
+          user_message: formState.message,
+        },
+        'YzCB4G4N2VFBOStid'
+      )
+
+      if (result.status === 200) {
+        setIsSubmitted(true)
+        setFormState({ name: '', email: '', message: '' })
+        setTimeout(() => setIsSubmitted(false), 5000)
+      }
     } catch (error) {
-      setSubmitStatus('error')
+      console.error('Email failed:', error)
+      alert('Failed to send message. Please email heinhtetsoe1821@gmail.com directly.')
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const socialLinks = [
-    {
-      name: 'GitHub',
-      url: 'https://github.com/callmeHeinHtet',
-      icon: (
-        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-        </svg>
-      ),
-    },
-    {
-      name: 'LinkedIn',
-      url: 'https://www.linkedin.com/in/hein-htet-soe-2015b334b/',
-      icon: (
-        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-        </svg>
-      ),
-    },
-    {
-      name: 'LINE',
-      url: 'https://line.me/ti/p/~callmeero81',
-      icon: (
-        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.036 9.608.391.084.922.258 1.057.592.121.303.079.778.039 1.085l-.171 1.027c-.053.303-.242 1.186 1.039.647 1.281-.54 6.911-4.069 9.428-6.967 1.739-1.907 2.572-3.843 2.572-5.992zm-18.988-2.595c.129 0 .234.105.234v4.153h1.693c.129 0 .233.104.233.233v.842c0 .129-.104.234-.233.234h-2.871c-.129 0-.234-.105-.234-.234v-5.229c0-.129.105-.233.234-.233h.944zm14.528 0c.129 0 .233.105.233.234v.842c0 .129-.104.234-.233.234h-2.178v1.006h2.178c.129 0 .233.104.233.233v.842c0 .129-.104.234-.233.234h-2.178v1.002h2.178c.129 0 .233.104.233.233v.847c0 .129-.104.234-.233.234h-3.356c-.129 0-.234-.105-.234-.234v-5.229c0-.129.105-.233.234-.233h3.356zm-10.108 0c.129 0 .233.105.233.234v5.229c0 .129-.104.234-.233.234h-.936c-.129 0-.234-.105-.234-.234v-5.229c0-.129.105-.233.234-.233h.936zm2.475 0c.129 0 .233.105.233.234v5.229c0 .129-.104.234-.233.234h-.936c-.129 0-.234-.105-.234-.234v-5.229c0-.129.105-.233.234-.233h.936z"/>
-        </svg>
-      ),
-    },
-  ]
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormState((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }))
+  }
 
   return (
-    <section id="contact" className="py-20 bg-[#111111]">
-      <div className="container">
-        <div ref={containerRef} className="max-w-4xl mx-auto">
-          <h2 className="text-5xl font-display mb-16 text-accent text-center">
-            Get in Touch
-          </h2>
+    <div ref={sectionRef} className="container relative z-10">
+      {/* Large CTA Headline */}
+      <div className="contact-headline text-center mb-16 md:mb-24">
+        <span className="section-label text-cream/60 mb-6 block">Get In Touch</span>
+        <h2 className="font-display text-display-lg md:text-display-hero text-cream uppercase leading-[0.9]">
+          Let's Create
+          <span className="block text-stroke-light">Together</span>
+        </h2>
+      </div>
 
-          <div className="grid md:grid-cols-2 gap-12 items-start">
-            {/* Contact Form */}
-            <div className="space-y-6 bg-white/5 p-8 rounded-2xl border border-white/10">
+      <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
+        {/* Left - Contact Info & Social */}
+        <div className="contact-content order-2 lg:order-1">
+          {/* Email - Make it BIG */}
+          <div className="mb-12">
+            <span className="text-xs uppercase tracking-[0.2em] text-cream/40 mb-4 block">
+              Drop a line
+            </span>
+            <a
+              href="mailto:heinhtetsoe1821@gmail.com"
+              className="group block"
+            >
+              <span className="font-display text-2xl md:text-3xl text-cream group-hover:text-flame transition-colors duration-300 break-all">
+                heinhtetsoe1821
+                <span className="text-flame">@</span>
+                gmail.com
+              </span>
+            </a>
+          </div>
+
+          {/* Location */}
+          <div className="mb-12">
+            <span className="text-xs uppercase tracking-[0.2em] text-cream/40 mb-4 block">
+              Location
+            </span>
+            <p className="font-display text-2xl text-cream">
+              Bangkok, Thailand
+            </p>
+            <p className="text-sm text-cream/50 mt-2">
+              Available for remote work worldwide
+            </p>
+          </div>
+
+          {/* Social Links - Editorial Style */}
+          <div className="social-links">
+            <span className="text-xs uppercase tracking-[0.2em] text-cream/40 mb-6 block">
+              Connect
+            </span>
+            <div className="space-y-4">
+              {socialLinks.map((link, index) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="social-link group flex items-center justify-between py-4 border-b border-cream/10 hover:border-flame/50 transition-colors duration-300"
+                >
+                  <div className="flex items-center gap-4">
+                    <span className="font-mono text-xs text-flame">
+                      0{index + 1}
+                    </span>
+                    <span className="text-cream group-hover:text-flame transition-colors duration-300">
+                      {link.name}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-cream/50 group-hover:text-cream/70 transition-colors">
+                      {link.handle}
+                    </span>
+                    <svg
+                      className="w-4 h-4 text-cream/30 group-hover:text-flame transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Availability Badge */}
+          <div className="mt-12 inline-flex items-center gap-3 px-4 py-3 bg-cream/5 border border-cream/10">
+            <div className="relative">
+              <div className="w-2 h-2 bg-green-500 rounded-full" />
+              <div className="absolute inset-0 w-2 h-2 bg-green-500 rounded-full animate-ping" />
+            </div>
+            <span className="text-sm text-cream/60">
+              Available for new projects
+            </span>
+          </div>
+        </div>
+
+        {/* Right - Contact Form */}
+        <div className="contact-form order-1 lg:order-2">
+          <div className="relative">
+            {/* Form Header */}
+            <div className="mb-8">
+              <h3 className="font-display text-h1 text-cream mb-2">
+                Start a Project
+              </h3>
+              <p className="text-cream/50">
+                Have an idea? Let's make it happen.
+              </p>
+            </div>
+
+            {isSubmitted ? (
+              <div className="py-16 text-center">
+                <div className="relative inline-block mb-6">
+                  <div className="w-20 h-20 border-2 border-flame flex items-center justify-center">
+                    <svg className="w-10 h-10 text-flame" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                </div>
+                <h3 className="font-display text-h2 text-cream mb-3">
+                  Message Sent
+                </h3>
+                <p className="text-cream/50">
+                  Thanks for reaching out. I'll get back to you within 24 hours.
+                </p>
+              </div>
+            ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-secondary mb-2">
-                    Name
+                {/* Name Field */}
+                <div className="form-field group">
+                  <label
+                    htmlFor="name"
+                    className={`block text-xs uppercase tracking-[0.15em] mb-3 transition-colors duration-300 ${
+                      focusedField === 'name' ? 'text-flame' : 'text-cream/50'
+                    }`}
+                  >
+                    Your Name
                   </label>
                   <input
                     type="text"
                     id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="form-input"
+                    name="name"
+                    value={formState.name}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('name')}
+                    onBlur={() => setFocusedField(null)}
                     required
+                    className="w-full bg-transparent border-b-2 border-cream/20 focus:border-flame py-4 text-lg text-cream placeholder:text-cream/30 outline-none transition-colors duration-300"
+                    placeholder="John Doe"
                   />
                 </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-secondary mb-2">
-                    Email
+
+                {/* Email Field */}
+                <div className="form-field group">
+                  <label
+                    htmlFor="email"
+                    className={`block text-xs uppercase tracking-[0.15em] mb-3 transition-colors duration-300 ${
+                      focusedField === 'email' ? 'text-flame' : 'text-cream/50'
+                    }`}
+                  >
+                    Email Address
                   </label>
                   <input
                     type="email"
                     id="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="form-input"
+                    name="email"
+                    value={formState.email}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('email')}
+                    onBlur={() => setFocusedField(null)}
                     required
+                    className="w-full bg-transparent border-b-2 border-cream/20 focus:border-flame py-4 text-lg text-cream placeholder:text-cream/30 outline-none transition-colors duration-300"
+                    placeholder="john@example.com"
                   />
                 </div>
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-secondary mb-2">
-                    Message
+
+                {/* Message Field */}
+                <div className="form-field group">
+                  <label
+                    htmlFor="message"
+                    className={`block text-xs uppercase tracking-[0.15em] mb-3 transition-colors duration-300 ${
+                      focusedField === 'message' ? 'text-flame' : 'text-cream/50'
+                    }`}
+                  >
+                    Project Details
                   </label>
                   <textarea
                     id="message"
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    rows={4}
-                    className="form-input"
+                    name="message"
+                    value={formState.message}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('message')}
+                    onBlur={() => setFocusedField(null)}
                     required
+                    rows={4}
+                    className="w-full bg-transparent border-b-2 border-cream/20 focus:border-flame py-4 text-lg text-cream placeholder:text-cream/30 outline-none transition-colors duration-300 resize-none"
+                    placeholder="Tell me about your project..."
                   />
                 </div>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="btn-primary w-full"
-                >
-                  {isSubmitting ? 'Sending...' : 'Send Message'}
-                </button>
-                {submitStatus === 'success' && (
-                  <p className="text-green-500 text-sm">Message sent successfully!</p>
-                )}
-                {submitStatus === 'error' && (
-                  <p className="text-red-500 text-sm">Failed to send message. Please try again.</p>
-                )}
+
+                {/* Submit Button */}
+                <div className="form-field pt-6">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="group relative w-full py-5 bg-cream text-ink font-display text-lg uppercase tracking-wider overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span className="relative z-10 flex items-center justify-center gap-3">
+                      {isSubmitting ? (
+                        <>
+                          <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          </svg>
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          Send Message
+                          <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                          </svg>
+                        </>
+                      )}
+                    </span>
+                    <div className="absolute inset-0 bg-flame -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-expo" />
+                    <span className="absolute inset-0 flex items-center justify-center gap-3 text-cream opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                      {!isSubmitting && (
+                        <>
+                          Send Message
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                          </svg>
+                        </>
+                      )}
+                    </span>
+                  </button>
+                </div>
               </form>
-            </div>
-
-            {/* Contact Info */}
-            <div className="space-y-12">
-              <div className="bg-white/5 p-8 rounded-2xl border border-white/10">
-                <h3 className="text-2xl font-display text-white mb-6">Contact Information</h3>
-                <div className="space-y-6">
-                  <p className="flex items-center text-secondary group hover:text-accent transition-colors">
-                    <svg className="w-5 h-5 mr-3 group-hover:text-accent transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                    heinhtetsoe1821@gmail.com
-                  </p>
-                  <p className="flex items-center text-secondary group hover:text-accent transition-colors">
-                    <svg className="w-5 h-5 mr-3 group-hover:text-accent transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                    +66 818805001
-                  </p>
-                  <p className="flex items-center text-secondary group hover:text-accent transition-colors">
-                    <svg className="w-5 h-5 mr-3 group-hover:text-accent transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    Bangkok, Thailand
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-white/5 p-8 rounded-2xl border border-white/10">
-                <h3 className="text-2xl font-display text-white mb-6">Connect with Me</h3>
-                <div className="flex gap-4">
-                  {socialLinks.map((link) => (
-                    <a
-                      key={link.name}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="social-link"
-                      aria-label={link.name}
-                    >
-                      {link.icon}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
-    </section>
+
+      {/* Bottom decoration */}
+      <div className="mt-24 pt-12 border-t border-cream/10">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+          <p className="text-sm text-cream/40 text-center md:text-left">
+            Looking forward to hearing from you
+          </p>
+          <div className="flex items-center gap-2 text-sm text-cream/40">
+            <span className="w-2 h-2 bg-flame rounded-full" />
+            <span>Based in Bangkok</span>
+            <span className="mx-2">|</span>
+            <span>Working Globally</span>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
-export default Contact 
+export default Contact

@@ -1,135 +1,209 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
+
+const navLinks = [
+  { name: 'Work', href: '#projects', num: '01' },
+  { name: 'About', href: '#about', num: '02' },
+  { name: 'Journey', href: '#journey', num: '03' },
+  { name: 'Contact', href: '#contact', num: '04' },
+]
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false)
-  const [activeSection, setActiveSection] = useState('home')
-  const pathname = usePathname()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState('')
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-      
-      // Update active section based on scroll position
-      const sections = ['home', 'about', 'projects', 'skills', 'contact']
-      const currentSection = sections.find(section => {
+      setIsScrolled(window.scrollY > 100)
+
+      const sections = ['projects', 'about', 'journey', 'contact']
+      for (const section of sections) {
         const element = document.getElementById(section)
         if (element) {
           const rect = element.getBoundingClientRect()
-          return rect.top <= 100 && rect.bottom >= 100
+          if (rect.top <= 200 && rect.bottom >= 200) {
+            setActiveSection(section)
+            break
+          }
         }
-        return false
-      })
-      
-      if (currentSection) {
-        setActiveSection(currentSection)
       }
     }
 
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const navItems = [
-    { name: 'Home', path: '/#home', id: 'home' },
-    { name: 'About', path: '/#about', id: 'about' },
-    { name: 'Projects', path: '/#projects', id: 'projects' },
-    { name: 'Skills', path: '/#skills', id: 'skills' },
-    { name: 'Contact', path: '/#contact', id: 'contact' },
-  ]
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isMobileMenuOpen])
 
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
           isScrolled
-            ? 'bg-primary/80 backdrop-blur-md shadow-lg'
-            : 'bg-transparent'
+            ? 'py-4 bg-cream/90 backdrop-blur-md border-b border-ink/5'
+            : 'py-6 bg-transparent'
         }`}
       >
-        <div className="container">
-          <div className="flex items-center justify-between h-16">
-            <Link
-              href="/"
-              className="text-xl font-display text-gradient hover:opacity-80 transition-opacity"
-            >
+        <div className="container flex items-center justify-between">
+          {/* Logo */}
+          <a href="#home" className="group relative">
+            <span className="font-display text-2xl md:text-3xl text-ink tracking-tight">
               HHS
-            </Link>
+            </span>
+            <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-flame scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+          </a>
 
-            <div className="hidden md:flex items-center space-x-8">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  href={item.path}
-                  className={`relative text-sm font-medium transition-colors duration-300 group
-                    ${
-                      activeSection === item.id
-                        ? 'text-accent'
-                        : 'text-secondary hover:text-white'
-                    }
-                  `}
-                >
-                  {item.name}
-                  <span
-                    className={`absolute -bottom-1 left-0 w-full h-0.5 bg-accent transition-transform duration-300
-                      ${activeSection === item.id ? 'scale-x-100' : 'scale-x-0'}
-                      group-hover:scale-x-100
-                    `}
-                  />
-                </Link>
-              ))}
-            </div>
-
-            {/* Mobile menu button */}
-            <button
-              className="md:hidden p-2 text-secondary hover:text-white transition-colors"
-              aria-label="Toggle menu"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-1">
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                className={`group relative px-5 py-2 text-sm uppercase tracking-wider transition-colors duration-300 ${
+                  activeSection === link.href.slice(1)
+                    ? 'text-ink'
+                    : 'text-stone hover:text-ink'
+                }`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            </button>
+                <span className="relative z-10 flex items-center gap-2">
+                  <span className="text-xxs text-flame font-mono opacity-0 group-hover:opacity-100 transition-opacity">
+                    {link.num}
+                  </span>
+                  {link.name}
+                </span>
+                {activeSection === link.href.slice(1) && (
+                  <motion.div
+                    layoutId="activeNav"
+                    className="absolute inset-0 bg-ink/5 rounded-sm"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
+              </a>
+            ))}
           </div>
+
+          {/* CTA */}
+          <div className="hidden md:flex items-center gap-6">
+            <a
+              href="mailto:heinhtetsoe1821@gmail.com"
+              className="group relative px-6 py-3 bg-ink text-cream text-sm uppercase tracking-wider overflow-hidden"
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                Let's Talk
+                <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </span>
+              <div className="absolute inset-0 bg-flame -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
+            </a>
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden relative w-12 h-12 flex items-center justify-center"
+            aria-label="Toggle menu"
+          >
+            <div className="relative w-6 h-5 flex flex-col justify-between">
+              <span
+                className={`block w-full h-0.5 bg-ink transition-all duration-300 origin-center ${
+                  isMobileMenuOpen ? 'rotate-45 translate-y-[9px]' : ''
+                }`}
+              />
+              <span
+                className={`block w-full h-0.5 bg-ink transition-all duration-300 ${
+                  isMobileMenuOpen ? 'opacity-0 scale-x-0' : ''
+                }`}
+              />
+              <span
+                className={`block w-full h-0.5 bg-ink transition-all duration-300 origin-center ${
+                  isMobileMenuOpen ? '-rotate-45 -translate-y-[9px]' : ''
+                }`}
+              />
+            </div>
+          </button>
         </div>
       </nav>
 
-      {/* Back to Top Button */}
-      <button
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className={`fixed bottom-8 right-8 z-50 p-3 rounded-full bg-accent/20 backdrop-blur-sm 
-          text-white transition-all duration-300 hover:bg-accent/30 hover:scale-110
-          ${isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}
-        aria-label="Back to top"
-      >
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 10l7-7m0 0l7 7m-7-7v18"
-          />
-        </svg>
-      </button>
+      {/* Mobile Menu - Full Screen */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-30 md:hidden bg-cream"
+          >
+            <div className="h-full flex flex-col justify-center px-8">
+              {/* Nav Links */}
+              <nav className="space-y-2">
+                {navLinks.map((link, index) => (
+                  <motion.a
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    initial={{ opacity: 0, x: -40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.1 + index * 0.05 }}
+                    className="group flex items-center gap-6 py-4 border-b border-ink/10"
+                  >
+                    <span className="text-xs font-mono text-flame">{link.num}</span>
+                    <span className="font-display text-4xl md:text-5xl text-ink group-hover:text-flame transition-colors duration-300">
+                      {link.name}
+                    </span>
+                  </motion.a>
+                ))}
+              </nav>
+
+              {/* Contact Info */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.4 }}
+                className="mt-16 pt-8 border-t border-ink/10"
+              >
+                <p className="text-xs uppercase tracking-wider text-stone mb-4">Get in touch</p>
+                <a
+                  href="mailto:heinhtetsoe1821@gmail.com"
+                  className="text-lg text-ink hover:text-flame transition-colors"
+                >
+                  heinhtetsoe1821@gmail.com
+                </a>
+              </motion.div>
+
+              {/* Social Links */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.5 }}
+                className="mt-8 flex gap-6"
+              >
+                <a href="https://github.com/callmeHeinHtet" target="_blank" rel="noopener noreferrer" className="text-stone hover:text-ink transition-colors">
+                  GitHub
+                </a>
+                <a href="https://www.linkedin.com/in/hein-htet-soe-2015b334b/" target="_blank" rel="noopener noreferrer" className="text-stone hover:text-ink transition-colors">
+                  LinkedIn
+                </a>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }
 
-export default Navbar 
+export default Navbar

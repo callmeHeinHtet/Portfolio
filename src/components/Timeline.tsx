@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -19,122 +19,166 @@ interface TimelineProps {
 }
 
 const Timeline = ({ items }: TimelineProps) => {
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const timelineRefs = useRef<(HTMLDivElement | null)[]>([])
+  const timelineRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Animate section title
-      gsap.from('.timeline-title', {
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        scrollTrigger: {
-          trigger: '.timeline-title',
-          start: 'top bottom-=100',
-          end: 'top center',
-          scrub: 1,
-        },
-      })
-
-      // Animate timeline line
-      gsap.from('.timeline-line', {
-        scaleY: 0,
-        transformOrigin: 'top',
-        duration: 1.5,
-        scrollTrigger: {
-          trigger: '.timeline-line',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1,
-        },
-      })
-
-      // Animate timeline items
-      timelineRefs.current.forEach((item, index) => {
-        const isEven = index % 2 === 0
-        gsap.from(item, {
-          x: isEven ? -50 : 50,
-          y: 50,
-          opacity: 0,
-          duration: 1,
+      // Timeline line grows down
+      gsap.fromTo('.timeline-line',
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          duration: 1.5,
+          ease: 'power2.out',
+          transformOrigin: 'top',
           scrollTrigger: {
-            trigger: item,
-            start: 'top bottom-=50',
-            end: 'top center+=100',
-            scrub: 1,
+            trigger: timelineRef.current,
+            start: 'top 75%',
+            once: true,
           },
-        })
+        }
+      )
+
+      // Each timeline item animates in separately
+      const items = gsap.utils.toArray('.timeline-item') as HTMLElement[]
+      items.forEach((item, i) => {
+        gsap.fromTo(item,
+          { x: -50, opacity: 0 },
+          {
+            x: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'expo.out',
+            scrollTrigger: {
+              trigger: item,
+              start: 'top 85%',
+              once: true,
+            },
+            delay: i * 0.1,
+          }
+        )
       })
-    }, sectionRef)
+
+      // Year badges pop in
+      const badges = gsap.utils.toArray('.year-badge') as HTMLElement[]
+      badges.forEach((badge, i) => {
+        gsap.fromTo(badge,
+          { scale: 0, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.5,
+            ease: 'back.out(2)',
+            scrollTrigger: {
+              trigger: badge,
+              start: 'top 85%',
+              once: true,
+            },
+            delay: i * 0.15,
+          }
+        )
+      })
+
+      // Dots animate
+      const dots = gsap.utils.toArray('.timeline-dot') as HTMLElement[]
+      dots.forEach((dot, i) => {
+        gsap.fromTo(dot,
+          { scale: 0 },
+          {
+            scale: 1,
+            duration: 0.4,
+            ease: 'back.out(3)',
+            scrollTrigger: {
+              trigger: dot,
+              start: 'top 85%',
+              once: true,
+            },
+            delay: i * 0.15,
+          }
+        )
+      })
+
+    }, timelineRef)
 
     return () => ctx.revert()
   }, [])
 
   return (
-    <section ref={sectionRef} className="py-20 bg-[#0F0F0F]">
-      <div className="container">
-        <h2 className="timeline-title text-5xl font-display mb-16 text-accent text-center">
-          My Journey
-        </h2>
+    <div ref={timelineRef} className="max-w-4xl mx-auto">
+      <div className="timeline-container relative">
+        {/* Timeline Line */}
+        <div className="timeline-line absolute left-0 md:left-[120px] top-0 bottom-0 w-px bg-gradient-to-b from-flame via-ink/20 to-transparent" />
 
-        <div className="relative max-w-5xl mx-auto">
-          {/* Timeline line */}
-          <div className="timeline-line absolute left-1/2 top-0 bottom-0 w-px bg-accent/20" />
+        {/* Timeline Items */}
+        <div className="space-y-12 md:space-y-16">
+          {items.map((item, index) => (
+            <div
+              key={index}
+              className="timeline-item relative flex flex-col md:flex-row gap-6 md:gap-12"
+            >
+              {/* Year */}
+              <div className="md:w-[120px] shrink-0 flex md:justify-end">
+                <div className="year-badge inline-flex items-center gap-2">
+                  <span className="font-display text-display-sm font-bold text-ink">
+                    {item.year}
+                  </span>
+                  {index === 0 && (
+                    <span className="text-xxs uppercase tracking-wider text-flame font-medium">
+                      Now
+                    </span>
+                  )}
+                </div>
+              </div>
 
-          <div className="space-y-16">
-            {items.map((item, index) => (
-              <div
-                key={item.year}
-                ref={(el) => (timelineRefs.current[index] = el)}
-                className="relative grid grid-cols-[1fr_auto_1fr] items-start gap-4 md:gap-8"
-              >
-                {/* Left side content */}
-                <div className={index % 2 === 0 ? '' : 'col-start-3'}>
-                  <div className={`space-y-4 ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
-                    <div className="inline-block">
-                      <span className="text-5xl font-display text-accent">{item.year}</span>
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-2xl font-display text-white hover:text-accent transition-colors">
-                        {item.title}
-                      </h3>
-                      <p className="text-lg text-accent/80">{item.company}</p>
-                      <p className="text-secondary/80 leading-relaxed">
-                        {item.description}
-                      </p>
-                    </div>
-                    <div className={`flex flex-wrap gap-3 ${
-                      index % 2 === 0 ? 'justify-end' : 'justify-start'
-                    }`}>
-                      {item.technologies.map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-3 py-1 text-sm text-secondary bg-white/5 rounded-full
-                            hover:text-accent hover:bg-accent/10 transition-colors duration-300"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
+              {/* Dot */}
+              <div className="absolute left-0 md:left-[120px] top-3 -translate-x-1/2 z-10">
+                <div className="timeline-dot relative">
+                  <div className={`w-3 h-3 rounded-full ${index === 0 ? 'bg-flame' : 'bg-ink'}`} />
+                  {index === 0 && (
+                    <div className="absolute inset-0 rounded-full bg-flame animate-ping opacity-50" />
+                  )}
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 pl-8 md:pl-0">
+                <div className="card p-6 md:p-8 hover:shadow-brutal">
+                  {/* Header */}
+                  <div className="mb-4">
+                    <h3 className="font-display text-h2 text-ink mb-1">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-stone">
+                      {item.company}
+                    </p>
+                  </div>
+
+                  {/* Description */}
+                  <p className="body-text mb-6">
+                    {item.description}
+                  </p>
+
+                  {/* Technologies */}
+                  <div className="flex flex-wrap gap-2">
+                    {item.technologies.map((tech) => (
+                      <span key={tech} className="tag">
+                        {tech}
+                      </span>
+                    ))}
                   </div>
                 </div>
-
-                {/* Center dot */}
-                <div className="relative">
-                  <div className="absolute left-1/2 top-3 -translate-x-1/2 w-4 h-4 rounded-full bg-accent 
-                    shadow-lg shadow-accent/20 transition-transform duration-300 hover:scale-125" />
-                </div>
-
-                {/* Empty column for opposite side */}
-                <div className={index % 2 === 0 ? 'col-start-3' : ''} />
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
+        </div>
+
+        {/* End marker */}
+        <div className="absolute left-0 md:left-[120px] bottom-0 -translate-x-1/2">
+          <div className="w-2 h-2 bg-ink/20 rounded-full" />
         </div>
       </div>
-    </section>
+    </div>
   )
 }
 
-export default Timeline 
+export default Timeline
