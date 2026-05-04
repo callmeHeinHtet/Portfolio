@@ -1,10 +1,11 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Image } from '@/components/Image'
 import { Project } from '@/data/projects'
+import PhonePreviewModal from '@/components/PhonePreviewModal'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -25,15 +26,20 @@ interface ProjectCardProps {
   project: Project
   index: number
   total: number
+  onPreview?: () => void
 }
 
-const ProjectCard = ({ project, index, total }: ProjectCardProps) => {
+const ProjectCard = ({ project, index, total, onPreview }: ProjectCardProps) => {
   const number = (index + 1).toString().padStart(3, '0')
   const totalStr = total.toString().padStart(3, '0')
   const accent = project.accent ?? DEFAULT_ACCENT
   const panelBg = project.panelBg ?? DEFAULT_PANEL_BG
   const isMirrored = index % 2 === 1
   const isDesktopShot = project.aspect === 'desktop'
+  // Phone-aspect projects open in an in-page phone preview modal so casual
+  // viewers see them framed as a phone instead of a stretched desktop site.
+  const opensInPhonePreview = !isDesktopShot && Boolean(onPreview)
+  const ctaLabel = opensInPhonePreview ? 'PREVIEW IN PHONE' : 'VIEW PROJECT'
 
   // Phone shots use a tall 9:19 frame at 280px wide.
   // Desktop shots use a 16:10 frame at 520px wide so they read as full sites.
@@ -133,7 +139,7 @@ const ProjectCard = ({ project, index, total }: ProjectCardProps) => {
         className="mt-7 inline-flex items-center gap-2.5 font-mono text-[11px] font-bold tracking-[2.5px] uppercase"
         style={{ color: accent }}
       >
-        <span>VIEW PROJECT</span>
+        <span>{ctaLabel}</span>
         <span
           className="font-display text-base leading-none transition-transform duration-300 group-hover:translate-x-2"
           aria-hidden
@@ -144,25 +150,41 @@ const ProjectCard = ({ project, index, total }: ProjectCardProps) => {
     </div>
   )
 
+  const cardInner = (
+    <div className="relative grid grid-cols-1 md:grid-cols-2 border-2 border-ink/10 hover:border-ink transition-all duration-500 overflow-hidden">
+      <div className={isMirrored ? 'md:order-2' : ''}>{phonePanel}</div>
+      <div className={isMirrored ? 'md:order-1' : ''}>{contentPanel}</div>
+    </div>
+  )
+
   return (
     <div className="project-feature">
-      <a
-        href={project.demo || project.link}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group block"
-      >
-        <div className="relative grid grid-cols-1 md:grid-cols-2 border-2 border-ink/10 hover:border-ink transition-all duration-500 overflow-hidden">
-          <div className={isMirrored ? 'md:order-2' : ''}>{phonePanel}</div>
-          <div className={isMirrored ? 'md:order-1' : ''}>{contentPanel}</div>
-        </div>
-      </a>
+      {opensInPhonePreview ? (
+        <button
+          type="button"
+          onClick={onPreview}
+          className="group block w-full text-left cursor-pointer"
+          aria-label={`Open ${project.title} in mobile preview`}
+        >
+          {cardInner}
+        </button>
+      ) : (
+        <a
+          href={project.demo || project.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group block"
+        >
+          {cardInner}
+        </a>
+      )}
     </div>
   )
 }
 
 const ProjectShowcase = ({ projects }: ProjectShowcaseProps) => {
   const sectionRef = useRef<HTMLDivElement>(null)
+  const [previewProject, setPreviewProject] = useState<Project | null>(null)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -191,9 +213,18 @@ const ProjectShowcase = ({ projects }: ProjectShowcaseProps) => {
             project={project}
             index={index}
             total={projects.length}
+            onPreview={() => setPreviewProject(project)}
           />
         ))}
       </div>
+
+      {previewProject && (
+        <PhonePreviewModal
+          url={previewProject.demo || previewProject.link}
+          title={previewProject.title}
+          onClose={() => setPreviewProject(null)}
+        />
+      )}
 
       {/* View All CTA */}
       <div className="mt-16 text-center">
