@@ -42,11 +42,8 @@ const timelineItems = [
   },
 ]
 
-const marqueeText = ['FULL STACK', 'AI SPECIALIST', 'REACT', 'NEXT.JS', 'TYPESCRIPT', 'PYTHON', 'UI/UX']
-
 export default function Home() {
   const heroRef = useRef<HTMLElement>(null)
-  const marqueeRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -102,7 +99,6 @@ export default function Home() {
         },
       })
 
-      // Marquee animation is handled by CSS
     }, heroRef)
 
     return () => ctx.revert()
@@ -173,24 +169,11 @@ export default function Home() {
         <div className="hero-scroll absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
           <span className="text-xxs uppercase tracking-[0.2em] text-stone">Scroll</span>
           <div className="w-px h-12 bg-ink/20 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-4 bg-flame animate-bounce-subtle" />
+            <div className="absolute top-0 left-0 w-full h-4 bg-flame animate-scroll-hint" />
           </div>
         </div>
       </section>
 
-      {/* ========== MARQUEE SECTION ========== */}
-      <section className="py-8 border-y border-ink/10 overflow-hidden">
-        <div ref={marqueeRef} className="marquee-track">
-          <div className="marquee-content">
-            {[...marqueeText, ...marqueeText].map((text, i) => (
-              <span key={i} className="flex items-center gap-8">
-                <span className="text-2xl md:text-3xl font-display uppercase text-ink/20">{text}</span>
-                <span className="w-2 h-2 bg-flame rounded-full" />
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ========== PROJECTS SECTION ========== */}
       <section id="projects" className="section relative">

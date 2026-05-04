@@ -126,6 +126,7 @@ const config: Config = {
         'spin-slow': 'spin 20s linear infinite',
         'pulse-subtle': 'pulseSubtle 3s ease-in-out infinite',
         'bounce-subtle': 'bounceSubtle 2s ease-in-out infinite',
+        'scroll-hint': 'scrollHint 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite',
       },
       keyframes: {
         fadeIn: {
@@ -171,6 +172,12 @@ const config: Config = {
         bounceSubtle: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-5px)' },
+        },
+        scrollHint: {
+          '0%': { transform: 'translateY(-100%)', opacity: '0' },
+          '15%': { opacity: '1' },
+          '85%': { opacity: '1' },
+          '100%': { transform: 'translateY(200%)', opacity: '0' },
         },
       },
       transitionTimingFunction: {
