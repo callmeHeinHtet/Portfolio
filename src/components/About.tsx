@@ -108,10 +108,11 @@ const About = () => {
             {/* Image container with border effect */}
             <div className="relative aspect-[4/5] overflow-hidden">
               <Image
-                src="/images/profile.jpg"
+                src="/images/profile.webp"
                 alt="Hein Htet Soe"
                 fill
                 className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                sizes="(max-width: 1024px) 100vw, 480px"
               />
               {/* Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent opacity-40" />

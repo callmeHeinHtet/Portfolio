@@ -1,5 +1,4 @@
 import NextImage from 'next/image';
-import { ASSET_PREFIX } from '@/utils/constants';
 
 interface ImageProps {
   src: string;
@@ -8,12 +7,14 @@ interface ImageProps {
   fill?: boolean;
   width?: number;
   height?: number;
+  priority?: boolean; // only the LCP image should be true; everything else lazy-loads
+  sizes?: string;
 }
 
-export const Image = ({ src, alt, className, fill, width, height }: ImageProps) => {
+export const Image = ({ src, alt, className, fill, width, height, priority = false, sizes }: ImageProps) => {
   // Handle both absolute URLs and relative paths
-  const imageSrc = src.startsWith('http') 
-    ? src 
+  const imageSrc = src.startsWith('http')
+    ? src
     : process.env.NODE_ENV === 'production'
       ? `/Portfolio${src.startsWith('/') ? src : `/${src}`}`
       : src.startsWith('/') ? src : `/${src}`;
@@ -26,8 +27,10 @@ export const Image = ({ src, alt, className, fill, width, height }: ImageProps) 
       fill={fill}
       width={width}
       height={height}
+      sizes={sizes}
       unoptimized // Required for static export
-      priority // Load images immediately
+      priority={priority}
+      loading={priority ? 'eager' : 'lazy'}
     />
   );
-}; 
+};

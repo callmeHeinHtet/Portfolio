@@ -61,6 +61,8 @@ const ProjectCard = ({ project, index, total }: ProjectCardProps) => {
           alt={project.title}
           fill
           className="object-contain"
+          priority={index === 0}
+          sizes={isDesktopShot ? '(max-width: 768px) 100vw, 520px' : '(max-width: 768px) 100vw, 280px'}
         />
       </div>
     </div>
