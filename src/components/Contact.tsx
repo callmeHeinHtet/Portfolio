@@ -234,7 +234,7 @@ const Contact = () => {
                 Start a Project
               </h3>
               <p className="text-cream/50">
-                Have an idea? Let&apos;s make it happen.
+                Tell me what you&apos;re building. I reply within 24 hours.
               </p>
             </div>
 
@@ -260,11 +260,12 @@ const Contact = () => {
                 <div className="form-field group">
                   <label
                     htmlFor="name"
-                    className={`block text-xs uppercase tracking-[0.15em] mb-3 transition-colors duration-300 ${
+                    className={`flex items-center gap-3 text-xs uppercase tracking-[0.15em] mb-3 transition-colors duration-300 ${
                       focusedField === 'name' ? 'text-flame' : 'text-cream/50'
                     }`}
                   >
-                    Your Name
+                    <span className="font-mono text-flame">01</span>
+                    Name
                   </label>
                   <input
                     type="text"
@@ -276,7 +277,6 @@ const Contact = () => {
                     onBlur={() => setFocusedField(null)}
                     required
                     className="w-full bg-transparent border-b-2 border-cream/20 focus:border-flame py-4 text-lg text-cream placeholder:text-cream/30 outline-none transition-colors duration-300"
-                    placeholder="John Doe"
                   />
                 </div>
 
@@ -284,11 +284,12 @@ const Contact = () => {
                 <div className="form-field group">
                   <label
                     htmlFor="email"
-                    className={`block text-xs uppercase tracking-[0.15em] mb-3 transition-colors duration-300 ${
+                    className={`flex items-center gap-3 text-xs uppercase tracking-[0.15em] mb-3 transition-colors duration-300 ${
                       focusedField === 'email' ? 'text-flame' : 'text-cream/50'
                     }`}
                   >
-                    Email Address
+                    <span className="font-mono text-flame">02</span>
+                    Where to reply
                   </label>
                   <input
                     type="email"
@@ -300,7 +301,6 @@ const Contact = () => {
                     onBlur={() => setFocusedField(null)}
                     required
                     className="w-full bg-transparent border-b-2 border-cream/20 focus:border-flame py-4 text-lg text-cream placeholder:text-cream/30 outline-none transition-colors duration-300"
-                    placeholder="john@example.com"
                   />
                 </div>
 
@@ -308,11 +308,12 @@ const Contact = () => {
                 <div className="form-field group">
                   <label
                     htmlFor="message"
-                    className={`block text-xs uppercase tracking-[0.15em] mb-3 transition-colors duration-300 ${
+                    className={`flex items-center gap-3 text-xs uppercase tracking-[0.15em] mb-3 transition-colors duration-300 ${
                       focusedField === 'message' ? 'text-flame' : 'text-cream/50'
                     }`}
                   >
-                    Project Details
+                    <span className="font-mono text-flame">03</span>
+                    The brief
                   </label>
                   <textarea
                     id="message"
@@ -324,7 +325,7 @@ const Contact = () => {
                     required
                     rows={4}
                     className="w-full bg-transparent border-b-2 border-cream/20 focus:border-flame py-4 text-lg text-cream placeholder:text-cream/30 outline-none transition-colors duration-300 resize-none"
-                    placeholder="Tell me about your project..."
+                    placeholder="What are you building, and where do I come in?"
                   />
                 </div>
 
