@@ -32,7 +32,7 @@ export const projects: Project[] = [
     description:
       'The live property-management system for a 47-room hotel in Pyapon, Myanmar — booking, folio billing, and operations, running in production on real money.',
     longDescription:
-      "A full PMS I built and still operate: public booking site, staff admin, and the billing engine behind a 47-room hotel. It takes real reservations, bills in MMK, and holds real guest records, so the interesting work has been correctness, cost, and security rather than features. The bugs that mattered were the quiet ones — a booking page that silently offered almost no rooms while the hotel was nearly full, and a pricing model that had been over-billing a third of the guest list without anyone noticing. Both were found by going looking, not by a bug report.",
+      "A full PMS I built and still operate: public booking site, staff admin, and the billing engine behind a 47-room hotel. It takes real reservations, bills in MMK, and holds real guest records — so the work that matters is correctness, cost, and security rather than features. Money has to be right to the kyat, guest data has to stay private, and the thing has to keep selling rooms on a free hosting tier. Every decision below is shaped by one of those three constraints.",
     image: 'images/ANT.webp',
     tags: [
       'Production System',
@@ -52,9 +52,9 @@ export const projects: Project[] = [
       'GitHub Actions',
     ],
     features: [
-      'Found the booking page offering ~1 room on every future date while the hotel sat 46/47 full — availability was computed client-side from an admin-only endpoint that returned 401, so it silently fell back to today\'s room status. Moved server-side; verified 1 room tonight / 47 on future dates.',
-      'Date-effective per-night pricing: a RoomRate history table bills each night at the rate in force that night, so a price rise never reaches an existing guest. Swept all 47 live bookings on release and corrected 23 that had been over-billed — 690,000 MMK.',
-      'Cut database egress ~99%. The admin dashboard re-pulled every booking (~1 MB) every 60s per open tab, roughly 30 GB/month, which blew the hosting quota. Replaced the poll with a 30-byte change-token endpoint and reload only when the token moves — same UI behaviour, near-zero idle cost.',
+      'Migrated the production database from Neon to Supabase while the hotel kept taking bookings — same Singapore region to hold latency, row-level security on, and the old instance retained as a cold rollback behind a single env swap.',
+      'Date-effective pricing: a RoomRate history table bills every night at the rate in force on that night, so a mid-stay change never reaches a guest already booked and a raise applies only from its effective date forward. Extra-bed rates are snapshotted per booking for the same reason.',
+      'Cut database egress ~99% and kept the whole system inside a free hosting tier. The admin dashboard polls a 30-byte change-token endpoint — a hash of the newest timestamp and row count — and only pulls the full dataset when that token moves. Staff see changes within 60s and instantly on tab focus; an idle dashboard costs almost nothing.',
       'Hardened through two self-run pentests: closed unauthenticated data-leak endpoints, an X-Forwarded-For rate-limit bypass, and guest enumeration on booking lookup. Rate-limit state moved to Upstash Redis so it survives serverless cold starts, fail-open so a cache outage can never block a booking.',
     ],
     link: 'https://aung-naing-thu.vercel.app',
@@ -65,9 +65,9 @@ export const projects: Project[] = [
     panelBg: '#F5EFE6',
     aspect: 'desktop',
     metrics: [
+      { label: 'YEAR', value: '2026' },
       { label: 'ROOMS', value: '47' },
       { label: 'EGRESS', value: '-99%' },
-      { label: 'OVERBILLED FIXED', value: '23' },
       { label: 'STATUS', value: 'LIVE' },
     ],
   },
