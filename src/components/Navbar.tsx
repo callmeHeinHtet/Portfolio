@@ -16,7 +16,10 @@ const Navbar = () => {
   const [activeSection, setActiveSection] = useState('')
 
   useEffect(() => {
-    const handleScroll = () => {
+    let rafId = 0
+
+    const measure = () => {
+      rafId = 0
       setIsScrolled(window.scrollY > 100)
 
       const sections = ['projects', 'about', 'journey', 'contact']
@@ -32,8 +35,24 @@ const Navbar = () => {
       }
     }
 
+    // Batch into a frame: this reads getBoundingClientRect for 4 sections, which forces
+    // a synchronous layout. Unthrottled it ran on every scroll event, thrashing layout
+    // alongside GSAP's own rAF-driven ScrollTrigger.
+    const handleScroll = () => {
+      if (!rafId) rafId = requestAnimationFrame(measure)
+    }
+
     window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    // Sync once on mount. Without this, a page that loads already scrolled — a refresh
+    // mid-page, a hot-reload, a restored scroll position, or an #anchor deep link — keeps
+    // isScrolled=false until the user scrolls, so the navbar renders transparent on top
+    // of the content instead of opaque.
+    measure()
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      if (rafId) cancelAnimationFrame(rafId)
+    }
   }, [])
 
   useEffect(() => {
