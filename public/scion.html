@@ -1,0 +1,1953 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Hein Htet Soe — Scion of the Underworld</title>
+<meta name="description" content="Hein Htet Soe, full-stack developer in Bangkok. A portfolio reimagined as a Hades-style game menu — explore projects as Boons, the Scion's Codex, and House Contracts like a roguelite main menu." />
+<meta name="author" content="Hein Htet Soe" />
+<meta name="theme-color" content="#0e0814" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230e0814'/><text x='16' y='24' font-family='Georgia,serif' font-size='23' font-weight='700' fill='%23f5c44a' text-anchor='middle'>H</text></svg>" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Hein Htet Soe — Scion of the Underworld" />
+<meta property="og:description" content="A portfolio reimagined as a Hades-style game menu." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preload" as="image" href="images/hades/hein-scion.webp" fetchpriority="high" />
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Unicase:wght@500;600;700&family=IM+Fell+English:ital@0;1&family=IM+Fell+DW+Pica+SC&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Unicase:wght@500;600;700&family=IM+Fell+English:ital@0;1&family=IM+Fell+DW+Pica+SC&display=swap" /></noscript>
+<style>
+  :root{
+    /* bottom-bar safe zone — keeps content above the controller strip + key */
+    --ctrl-h: 48px;
+    --key-h: 16px;
+    --bot-safe: calc(var(--ctrl-h) + var(--key-h) + 16px);  /* ≈ 80px */
+
+    --void:#0e0814;
+    --void-2:#1a0f24;
+    --gold:#f5c44a;
+    --gold-bright:#fde47e;
+    --gold-deep:#a8782b;
+    --gold-line:#7b5a23;
+    --blood:#e63a2f;
+    --blood-bright:#ff6a52;
+    --blood-deep:#a01a14;
+    --cyan:#5fb8c9;
+    --ivory:#f1e6c8;
+    --ivory-soft:#cbb98c;
+    --paper:#e9dcb2;
+    --ink:#1a0e08;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:var(--void);color:var(--ivory);font-family:'IM Fell English',Georgia,serif}
+  body{
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(108,58,166,.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(230,58,47,.10) 0%, transparent 55%),
+      linear-gradient(180deg,#0e0814 0%, #0a060f 100%);
+  }
+  /* Vellum noise — painted-ground feel on every dark surface, replaces the
+     mechanical dot stipple. Single inline SVG turbulence filter, no extra fetch. */
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:400;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch' seed='3'/><feColorMatrix values='0 0 0 0 .96  0 0 0 0 .89  0 0 0 0 .70  0 0 0 .18 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    mix-blend-mode:screen;opacity:.32}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:401;
+    background:radial-gradient(ellipse at center, transparent 38%, rgba(8,4,12,.78) 100%)}
+  /* Reusable painted-grain overlay any panel can opt into via class. */
+  .painted-grain{position:relative}
+  .painted-grain::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='stitch' seed='7'/><feColorMatrix values='0 0 0 0 .94  0 0 0 0 .86  0 0 0 0 .66  0 0 0 .22 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    mix-blend-mode:screen;opacity:.22;border-radius:inherit}
+
+  /* ===== Greek key strip ===== */
+  .greek-key{height:16px;width:100%;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='16' viewBox='0 0 48 16'><g fill='none' stroke='%23f5c44a' stroke-width='1.4'><path d='M0 14 L0 3 L12 3 L12 11 L4 11 L4 7 L8 7'/><path d='M16 14 L16 3 L28 3 L28 11 L20 11 L20 7 L24 7'/><path d='M32 14 L32 3 L44 3 L44 11 L36 11 L36 7 L40 7'/></g></svg>");
+    background-repeat:repeat-x;background-size:48px 16px;opacity:.7}
+
+  /* ===== Bottom controller strip ===== */
+  .ctrl{
+    position:fixed;bottom:0;left:0;right:0;z-index:300;
+    height:var(--ctrl-h);
+    padding:0 36px;background:linear-gradient(180deg,transparent,rgba(8,4,12,.95));
+    display:flex;justify-content:space-between;align-items:center;color:var(--gold);
+  }
+  .ctrl .group{display:flex;gap:22px;align-items:center}
+  .ctrl .b{display:inline-flex;gap:10px;align-items:center;font-family:'IM Fell DW Pica SC',serif;font-size:11px;letter-spacing:.32em;text-transform:uppercase;cursor:default;user-select:none}
+  .ctrl .b[hidden]{display:none !important}
+  .ctrl .b.act{cursor:pointer}
+  .ctrl .b.act:hover{color:var(--gold-bright)}
+  .ctrl .glyph{
+    /* pill shape — works for single char (A, B) AND multi-char (↑↓, Esc, 1-4) */
+    min-width:26px;height:26px;padding:0 9px;border-radius:13px;
+    border:1.5px solid var(--gold);background:rgba(8,4,12,.6);
+    display:inline-flex;align-items:center;justify-content:center;
+    color:var(--gold);font-family:'IM Fell DW Pica SC',serif;font-size:11px;line-height:1;
+    font-weight:600;letter-spacing:.02em;
+  }
+  .ctrl .lbl{color:var(--ivory-soft);opacity:.85;font-family:'IM Fell English',serif;font-style:italic;font-size:14px;letter-spacing:.06em;text-transform:none}
+
+  /* ===== Touch-only navigation (phones / tablets) =====
+     The controller strip is keyboard-centric, so on touch devices we hide it and
+     show a clear, thumb-reachable Back button instead. Forward navigation already
+     works by tapping menu paths / cards. */
+  .touch-nav{display:none;position:fixed;left:18px;bottom:16px;z-index:520;
+    align-items:center;gap:9px;padding:12px 20px 12px 15px;border-radius:26px;
+    background:linear-gradient(180deg, rgba(40,16,20,.94), rgba(10,6,15,.94));
+    border:1.5px solid var(--gold);color:var(--gold-bright);cursor:pointer;
+    font-family:'IM Fell DW Pica SC',serif;font-size:12px;letter-spacing:.3em;text-transform:uppercase;
+    box-shadow:0 4px 18px rgba(0,0,0,.55), 0 0 16px rgba(245,196,74,.18);
+    -webkit-tap-highlight-color:transparent;}
+  .touch-nav .arr{font-size:20px;line-height:1;margin-top:-2px}
+  .touch-nav:active{transform:scale(.96);background:linear-gradient(180deg, rgba(60,22,28,.96), rgba(16,8,20,.96))}
+  @media (hover:none) and (pointer:coarse){
+    .ctrl{display:none!important}
+    .touch-nav{display:inline-flex}
+    .touch-nav[hidden]{display:none}
+  }
+
+  /* ============== SCREEN STATE MACHINE ============== */
+  .screen{
+    position:fixed; inset:0;
+    opacity:0; pointer-events:none;
+    transition: opacity .25s ease;
+    z-index:1;
+  }
+  body[data-screen="boot"]       .screen[data-name="boot"],
+  body[data-screen="title"]      .screen[data-name="title"],
+  body[data-screen="boons"]      .screen[data-name="boons"],
+  body[data-screen="codex"]      .screen[data-name="codex"],
+  body[data-screen="contracts"]  .screen[data-name="contracts"],
+  body[data-screen="mirror"]     .screen[data-name="mirror"],
+  body[data-screen="souls"]      .screen[data-name="souls"],
+  body[data-screen="grace"]      .screen[data-name="grace"]{
+    opacity:1; pointer-events:auto; z-index:2;
+  }
+
+  /* ============== BOOT (Press Any Button) ============== */
+  .boot-screen{
+    background:
+      radial-gradient(ellipse at 50% 60%, rgba(108,58,166,.15) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 90%, rgba(230,58,47,.10) 0%, transparent 55%),
+      linear-gradient(180deg,#0e0814 0%, #050308 100%);
+  }
+  .boot-screen .key-top{position:absolute;top:0;left:0;right:0;z-index:5}
+  .boot-screen .key-bot{position:absolute;bottom:0;left:0;right:0;z-index:5;transform:scaleY(-1)}
+  .boot-screen .canvas-host{position:absolute;inset:0;z-index:1}
+
+  /* Layered: character behind, text blocks in front using a flex column */
+  .boot-stack{
+    position:absolute;inset:48px 60px 48px;z-index:4;
+    display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+    pointer-events:none;
+  }
+  .boot-top{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+  .boot-presents{
+    font-family:'IM Fell DW Pica SC',serif;font-size:10px;letter-spacing:.6em;color:var(--gold);opacity:.85;
+  }
+  .boot-wordmark h1{
+    /* Cormorant Unicase italic drops the dot on lowercase i ("Heın"); use
+       roman (non-italic) at heavy weight so "Hein" reads correctly. */
+    font-family:'Cormorant Unicase',serif;font-style:normal;font-weight:700;
+    /* clamped by both width AND height so it never crowds the character below */
+    font-size:min(8vw, 14vh, 120px);line-height:.92;
+    color:var(--ivory);text-shadow:0 4px 30px rgba(0,0,0,.85), 0 0 70px rgba(245,196,74,.18);
+    letter-spacing:.005em;
+  }
+  /* Single solid color across the whole title — emphasis via weight + italic. */
+  .boot-wordmark .htet,.boot-wordmark .soe{color:var(--ivory)}
+  .boot-tag{
+    font-family:'IM Fell English',serif;font-style:italic;color:var(--ivory-soft);
+    font-size:clamp(14px,1.8vh,18px);letter-spacing:.1em;opacity:.85;
+  }
+  .boot-tag::before{content:"❦ ";color:var(--gold)}
+  .boot-tag::after{content:" ❦";color:var(--gold)}
+
+  /* character behind the text — z-index 3, positioned absolute so it doesn't push layout */
+  .boot-char{
+    position:absolute;left:50%;bottom:14%;transform:translateX(-50%);
+    /* height by viewport units so it scales but stays small enough not to crowd text */
+    height:min(58vh, 600px);width:auto;z-index:3;opacity:.95;
+    filter:drop-shadow(0 0 80px rgba(245,196,74,.3)) drop-shadow(0 18px 40px rgba(0,0,0,.7));
+    animation:idle 6s ease-in-out infinite;transform-origin:50% 90%;
+  }
+
+  .boot-prompt{
+    font-family:'IM Fell DW Pica SC',serif;font-size:13px;letter-spacing:.65em;color:var(--gold);
+    text-align:center;animation:promptPulse 1.5s ease-in-out infinite;
+    text-shadow:0 0 18px rgba(245,196,74,.6);
+  }
+  .boot-prompt::before{content:"▸ "}
+  @keyframes promptPulse{0%,100%{opacity:.35}50%{opacity:1}}
+
+  /* ============== SCREEN TRANSITION — Knife-cut curtain ============== */
+  /* goto() clones the current screen into two clip-path halves; a glowing blade
+     slashes down the centre seam, then the two halves topple and fall away under
+     gravity — revealing the new screen swapped in beneath. */
+  .curtain{position:fixed;inset:0;z-index:600;pointer-events:none;overflow:hidden;visibility:hidden}
+  .curtain.active{visibility:visible}
+  .curtain .half{position:fixed;inset:0;overflow:hidden;will-change:transform,opacity;
+    filter:drop-shadow(0 14px 34px rgba(0,0,0,.7))}
+  .curtain .half.left {clip-path:inset(0 50% 0 0)}
+  .curtain .half.right{clip-path:inset(0 0 0 50%)}
+  .curtain .half > *{position:absolute!important;inset:0!important;opacity:1!important;margin:0!important}
+  .curtain .cut{position:fixed;top:0;bottom:0;left:50%;width:3px;transform:translateX(-50%) scaleY(0);transform-origin:50% 0;opacity:0;
+    background:linear-gradient(180deg, transparent 0%, #fff 16%, var(--gold-bright) 40%, var(--blood) 72%, transparent 100%);
+    box-shadow:0 0 12px var(--gold-bright), 0 0 30px var(--blood)}
+  .curtain.active .cut       {animation:knifeCut .26s cubic-bezier(.6,0,.2,1) forwards}
+  .curtain.active .half.left {animation:curtainFallL .6s cubic-bezier(.45,.05,.6,1) .2s forwards}
+  .curtain.active .half.right{animation:curtainFallR .6s cubic-bezier(.45,.05,.6,1) .2s forwards}
+  @keyframes knifeCut{0%{transform:translateX(-50%) scaleY(0);opacity:0}40%{opacity:1}100%{transform:translateX(-50%) scaleY(1);opacity:0}}
+  @keyframes curtainFallL{0%{transform:translate(0,0) rotate(0)}100%{transform:translate(-9vw,116vh) rotate(-13deg);opacity:.12}}
+  @keyframes curtainFallR{0%{transform:translate(0,0) rotate(0)}100%{transform:translate(9vw,116vh) rotate(13deg);opacity:.12}}
+  @media (prefers-reduced-motion:reduce){.curtain{display:none!important}}
+
+  /* ============== TITLE SCREEN (redesigned: menu hero, character supporting) ============== */
+  .title-screen{
+    display:grid;grid-template-columns: 1.25fr 1fr;height:100%;
+  }
+  .title-screen .key-top{position:absolute;top:0;left:0;right:0;z-index:5}
+  .title-screen .key-bot{position:absolute;bottom:var(--ctrl-h);left:0;right:0;z-index:5;transform:scaleY(-1)}
+  .title-left{
+    position:relative;padding:48px 60px var(--bot-safe);
+    display:flex;flex-direction:column;gap:24px;
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(108,58,166,.14) 0%, transparent 55%),
+      linear-gradient(180deg,#160b1f 0%, #0a060f 100%);
+    border-right:1px solid var(--gold-line);
+    min-height:0;
+  }
+  .title-left::after{content:"";position:absolute;top:0;right:-1px;width:2px;height:100%;
+    background:linear-gradient(180deg,transparent,var(--gold) 25%,var(--gold) 75%,transparent);box-shadow:0 0 14px rgba(245,196,74,.4)}
+  /* Compact crest row at top */
+  .crest-bar{display:flex;align-items:center;justify-content:space-between;gap:18px}
+  .crest{display:flex;align-items:center;gap:14px;font-family:'IM Fell DW Pica SC',serif;font-size:11px;letter-spacing:.4em;color:var(--gold)}
+  .crest .house-crest{width:64px;height:64px;display:block;flex-shrink:0;
+    filter:drop-shadow(0 0 10px rgba(245,196,74,.5)) drop-shadow(0 2px 6px rgba(0,0,0,.6))}
+  .crest-bar .epoch{font-family:'IM Fell DW Pica SC',serif;font-size:10px;letter-spacing:.4em;color:var(--gold-deep)}
+
+  /* Compact title block — one line, modest size */
+  .title-block{margin-top:8px}
+  h1.title{
+    /* Roman (non-italic) at heavy weight — italic drops the dot on lowercase i. */
+    font-family:'Cormorant Unicase',serif;font-weight:700;font-style:normal;
+    font-size:clamp(36px, 4.2vw, 64px);
+    line-height:1;color:var(--ivory);
+    text-shadow:0 4px 24px rgba(0,0,0,.8);
+    letter-spacing:.005em;
+  }
+  /* Single solid color — emphasis via weight + italic, not decorative spans. */
+  h1.title .htet,h1.title .soe{color:var(--ivory)}
+  .epithet{
+    margin-top:10px;font-family:'IM Fell English',serif;font-style:italic;
+    color:var(--ivory-soft);font-size:15px;letter-spacing:.04em;opacity:.85;
+  }
+  .epithet::before{content:"❦ ";color:var(--gold)}
+  .epithet::after{content:" ❦";color:var(--gold)}
+
+  /* SELECT label above menu */
+  .select-label{
+    display:flex;align-items:center;gap:14px;
+    margin-top:4px;font-family:'IM Fell DW Pica SC',serif;font-size:11px;letter-spacing:.5em;color:var(--gold);
+  }
+  .select-label::before,.select-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold-line),transparent)}
+
+  /* ============== MENU BUTTONS (proper card-style) ============== */
+  .menu{list-style:none;display:flex;flex-direction:column;gap:10px;flex:1;min-height:0}
+  .menu li{flex:1;display:flex;min-height:0}
+  .menu a{
+    flex:1;display:grid;grid-template-columns: 44px 1fr auto 14px;
+    gap:16px;align-items:center;
+    padding:0 18px 0 14px;
+    text-decoration:none;cursor:pointer;position:relative;overflow:hidden;
+    background:
+      linear-gradient(90deg, rgba(28,18,40,.78) 0%, rgba(10,6,15,.6) 100%);
+    border:1px solid var(--gold-line);
+    transition: background .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+  }
+  /* Gold corner brackets */
+  .menu a::before,.menu a::after{
+    content:"";position:absolute;width:12px;height:12px;border:2px solid var(--gold);pointer-events:none;
+    opacity:0;transition:opacity .18s;
+  }
+  .menu a::before{top:-2px;left:-2px;border-right:none;border-bottom:none}
+  .menu a::after{bottom:-2px;right:-2px;border-left:none;border-top:none}
+
+  .menu a .num{
+    font-family:'Cormorant Unicase',serif;font-style:italic;font-size:22px;color:var(--gold-deep);
+    text-align:center;line-height:1;
+  }
+  .menu a .label{
+    font-family:'IM Fell DW Pica SC',serif;font-size:clamp(13px,1.6vh,16px);letter-spacing:.28em;color:var(--ivory);
+  }
+  .menu a .label .sub{
+    display:block;margin-top:3px;font-family:'IM Fell English',serif;font-style:italic;
+    font-size:13px;letter-spacing:.04em;color:var(--ivory-soft);text-transform:none;opacity:.75;
+  }
+  .menu a .rune{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:30px;height:30px;color:var(--gold);
+  }
+  .menu a .rune svg{width:24px;height:24px;display:block}
+  .menu a .rune svg path,
+  .menu a .rune svg circle,
+  .menu a .rune svg line{
+    stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+  }
+  .menu a .arrow{
+    color:var(--gold-deep);font-family:'IM Fell DW Pica SC',serif;font-size:14px;
+    transform:translateX(-4px);transition:transform .18s, color .18s;
+  }
+
+  /* Hover + selected (active item) */
+  .menu a:hover, .menu a.on{
+    background:
+      linear-gradient(90deg, rgba(154,29,18,.55) 0%, rgba(28,18,40,.7) 70%, rgba(10,6,15,.6) 100%);
+    border-color:var(--gold);
+    box-shadow: 0 0 24px rgba(245,196,74,.18), inset 0 0 30px rgba(230,58,47,.15);
+  }
+  .menu a:hover::before, .menu a:hover::after,
+  .menu a.on::before, .menu a.on::after{opacity:1}
+  .menu a:hover .num, .menu a.on .num{color:var(--gold-bright)}
+  .menu a:hover .label, .menu a.on .label{color:var(--gold-bright)}
+  .menu a:hover .rune, .menu a.on .rune{color:var(--blood-bright)}
+  .menu a:hover .arrow, .menu a.on .arrow{color:var(--gold-bright);transform:translateX(0)}
+
+  /* Selected item — extra red glow on left edge */
+  .menu a.on::before, .menu a.on::after{opacity:1}
+  .menu a.on{
+    background:
+      linear-gradient(90deg, rgba(230,58,47,.32) 0%, rgba(28,18,40,.85) 70%, rgba(10,6,15,.6) 100%);
+  }
+
+  .footer{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font-family:'IM Fell English',serif;font-style:italic;color:var(--ivory-soft);opacity:.65;font-size:12px}
+  @keyframes blink{50%{opacity:.3}}
+
+  .title-right{
+    position:relative;overflow:hidden;
+    background:
+      radial-gradient(ellipse at 50% 65%, rgba(245,196,74,.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 85%, rgba(230,58,47,.18) 0%, transparent 55%),
+      linear-gradient(180deg,#1a0f24 0%, #0a060f 100%);
+  }
+  .halo{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);
+    width:660px;height:660px;border-radius:50%;
+    background:radial-gradient(circle at center, rgba(245,196,74,.22) 0%, rgba(245,196,74,0) 60%);
+    pointer-events:none;animation:pulse 4.5s ease-in-out infinite}
+  @keyframes pulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.85}50%{transform:translate(-50%,-50%) scale(1.07);opacity:1}}
+  .rays{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%) rotate(0);width:900px;height:900px;pointer-events:none;opacity:.16;animation:spin 60s linear infinite;
+    background:conic-gradient(from 0deg, transparent 0deg, rgba(245,196,74,.5) 8deg, transparent 16deg, transparent 30deg, rgba(245,196,74,.5) 38deg, transparent 46deg, transparent 60deg, rgba(245,196,74,.5) 68deg, transparent 76deg, transparent 90deg, rgba(245,196,74,.5) 98deg, transparent 106deg, transparent 120deg, rgba(245,196,74,.5) 128deg, transparent 136deg, transparent 150deg, rgba(245,196,74,.5) 158deg, transparent 166deg, transparent 180deg, rgba(245,196,74,.5) 188deg, transparent 196deg, transparent 210deg, rgba(245,196,74,.5) 218deg, transparent 226deg, transparent 240deg, rgba(245,196,74,.5) 248deg, transparent 256deg, transparent 270deg, rgba(245,196,74,.5) 278deg, transparent 286deg, transparent 300deg, rgba(245,196,74,.5) 308deg, transparent 316deg, transparent 330deg, rgba(245,196,74,.5) 338deg, transparent 346deg, transparent 360deg);
+    mask:radial-gradient(circle at center, black 30%, transparent 70%)}
+  @keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+  .embers{position:absolute;inset:0;z-index:3;pointer-events:none}
+  .hero-char{
+    position:absolute;left:50%;bottom:var(--bot-safe);transform:translateX(-50%);
+    height:calc(100% - var(--bot-safe) - 32px);width:auto;z-index:4;
+    filter:drop-shadow(0 0 60px rgba(245,196,74,.25)) drop-shadow(0 18px 30px rgba(0,0,0,.6));
+    animation:idle 6s ease-in-out infinite;transform-origin:50% 90%;
+  }
+  @keyframes idle{
+    0%,100%{transform:translateX(-50%) translateY(0) scale(1) rotate(0deg)}
+    25%{transform:translateX(-50%) translateY(-6px) scale(1.005) rotate(.4deg)}
+    50%{transform:translateX(-50%) translateY(-3px) scale(1.01) rotate(-.2deg)}
+    75%{transform:translateX(-50%) translateY(-7px) scale(1.005) rotate(.3deg)}
+  }
+  .rune-tag{position:absolute;top:22px;left:22px;z-index:7;display:flex;align-items:center;gap:10px;font-family:'IM Fell DW Pica SC',serif;font-size:10px;letter-spacing:.45em;color:var(--gold)}
+  .rune-tag .d{width:6px;height:6px;background:var(--blood);transform:rotate(45deg)}
+  .scion-stamp{position:absolute;top:22px;right:22px;z-index:7;width:140px;height:140px;border-radius:50%;
+    border:1px solid rgba(245,196,74,.35);background:rgba(245,196,74,.04);
+    display:flex;align-items:center;justify-content:center;font-family:'Cormorant Unicase',serif;font-style:italic;font-size:54px;color:rgba(245,196,74,.55)}
+  .scion-stamp::after{content:"SCION OF THE HOUSE";position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:8px;letter-spacing:.5em;color:var(--gold);font-style:normal}
+
+  /* ============== SHARED SCREEN CHROME ============== */
+  .scr{
+    /* NOTE: do NOT set `position` here — the .screen class already sets position:fixed; inset:0;
+       overriding with position:relative would knock the screen back into document flow. */
+    padding:48px 60px calc(var(--bot-safe) + 12px);display:flex;flex-direction:column;
+  }
+  .scr .key-top{position:absolute;top:0;left:0;right:0;z-index:5;opacity:.65}
+  .scr .head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;border-bottom:1px solid var(--gold-line);padding:0 0 14px}
+  .scr .head .h{font-family:'Cormorant Unicase',serif;font-size:44px;color:var(--ivory);font-style:italic;letter-spacing:.01em}
+  .scr .head .h em{color:var(--gold);font-style:italic;font-family:'Cormorant Unicase',serif}
+  .scr .head .crumbs{font-family:'IM Fell English',serif;font-style:italic;color:var(--gold);font-size:14px;letter-spacing:.16em}
+  .scr .head .crumbs .sep{margin:0 10px;color:var(--gold-deep)}
+  .scr .body{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center}
+
+  /* ============== BOONS ============== */
+  /* embers behind cards */
+  .boons-canvas-host{position:absolute;inset:0;z-index:0;pointer-events:none}
+  .boons-canvas-host canvas{position:absolute;inset:0;width:100%;height:100%}
+
+  .boon-prompt{position:relative;z-index:2;text-align:center;font-family:'IM Fell English',serif;font-style:italic;color:var(--ivory-soft);font-size:20px;margin:0 0 24px}
+  .boon-prompt em{color:var(--gold);font-style:italic}
+  /* Asymmetric grid — legendary boon gets more width, secondaries are smaller.
+     Different vertical offsets and static rotateZ tilts per rarity prevent the
+     "three identical cards in a row" anti-pattern from the design skill. */
+  .boons{position:relative;z-index:2;display:grid;
+    grid-template-columns:1.45fr .95fr .95fr;
+    align-items:start;gap:34px 32px;max-width:1320px;margin:0 auto;width:100%}
+  .boons .boon[data-rarity="legendary"]{margin-top:-6px}
+  .boons .boon[data-rarity="heroic"]   {margin-top:18px}
+  .boons .boon[data-rarity="rare"]     {margin-top:28px}
+
+  .boon{position:relative;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(245,196,74,.10) 0%, transparent 60%),
+      linear-gradient(180deg,#1c1228 0%, #0a060f 100%);
+    border:1px solid var(--gold-line);padding:26px 22px 22px;cursor:pointer;
+    /* CSS vars: parallax (rx,ry from JS) + static painted tilt (rz per rarity). */
+    --rx:0deg; --ry:0deg; --rz:0deg;
+    transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry)) rotateZ(var(--rz));
+    transform-style:preserve-3d;
+    transition:transform .15s ease-out, box-shadow .35s ease, border-color .25s;
+  }
+  .boons .boon[data-rarity="legendary"]{--rz:-1.4deg}
+  .boons .boon[data-rarity="heroic"]   {--rz: 1.1deg}
+  .boons .boon[data-rarity="rare"]     {--rz: 2.2deg}
+  /* Inner layers float at different depths for parallax */
+  .boon .sigil-wrap{transform:translateZ(50px);transition:transform .15s ease-out}
+  .boon .name      {transform:translateZ(28px)}
+  .boon .meta      {transform:translateZ(20px)}
+  .boon .desc      {transform:translateZ(12px)}
+  .boon .effect    {transform:translateZ(18px)}
+  .boon .cta       {transform:translateZ(24px)}
+  /* Rarity-tinted ambient border tone */
+  .boon[data-rarity="legendary"]{border-color:rgba(230,58,47,.45)}
+  .boon[data-rarity="heroic"]   {border-color:rgba(245,196,74,.45)}
+  .boon[data-rarity="rare"]     {border-color:rgba(95,184,201,.45)}
+
+  /* Stagger entrance — cards fly up when screen activates */
+  body[data-screen="boons"] .boons .boon{animation:boonEnter .55s cubic-bezier(.2,.7,.2,1) backwards}
+  body[data-screen="boons"] .boons .boon:nth-child(1){animation-delay:.08s}
+  body[data-screen="boons"] .boons .boon:nth-child(2){animation-delay:.20s}
+  body[data-screen="boons"] .boons .boon:nth-child(3){animation-delay:.32s}
+  @keyframes boonEnter{
+    from{opacity:0;transform:translateY(50px) scale(.94)}
+    to  {opacity:1;transform:translateY(0)    scale(1)}
+  }
+
+  /* Slow idle float for every card */
+  .boon .sigil{animation:sigilFloat 5s ease-in-out infinite}
+  @keyframes sigilFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  .boon::before,.boon::after,.boon .br::before,.boon .br::after{content:"";position:absolute;width:20px;height:20px;border:2px solid var(--gold);pointer-events:none}
+  .boon::before{top:-2px;left:-2px;border-right:none;border-bottom:none}
+  .boon::after{top:-2px;right:-2px;border-left:none;border-bottom:none}
+  .boon .br{position:absolute;inset:0;pointer-events:none;display:block}
+  .boon .br::before{bottom:-2px;left:-2px;border-right:none;border-top:none}
+  .boon .br::after{bottom:-2px;right:-2px;border-left:none;border-top:none}
+  .boon:hover,
+  .boon.on{
+    transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry)) rotateZ(var(--rz)) translateY(-8px) scale(1.03);
+    border-color:var(--gold-bright);
+    z-index:3;
+  }
+  /* Rarity-tinted glow on active card */
+  .boon.on[data-rarity="legendary"],
+  .boon:hover[data-rarity="legendary"]{
+    box-shadow:0 0 60px rgba(230,58,47,.4), 0 0 100px rgba(245,196,74,.18), inset 0 0 50px rgba(230,58,47,.12);
+  }
+  .boon.on[data-rarity="heroic"],
+  .boon:hover[data-rarity="heroic"]{
+    box-shadow:0 0 60px rgba(245,196,74,.4), 0 0 100px rgba(245,196,74,.18), inset 0 0 50px rgba(245,196,74,.12);
+  }
+  .boon.on[data-rarity="rare"],
+  .boon:hover[data-rarity="rare"]{
+    box-shadow:0 0 60px rgba(95,184,201,.45), 0 0 100px rgba(95,184,201,.20), inset 0 0 50px rgba(95,184,201,.12);
+  }
+  /* Active card: corner brackets pulse + icon glows */
+  .boon.on::before,.boon.on::after,
+  .boon.on .br::before,.boon.on .br::after{
+    animation:boonCornerPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes boonCornerPulse{
+    0%,100%{filter:drop-shadow(0 0 0 var(--gold))}
+    50%    {filter:drop-shadow(0 0 6px var(--gold-bright))}
+  }
+  .boon.on .sigil{animation:sigilGlow 1.8s ease-in-out infinite}
+  @keyframes sigilGlow{
+    0%,100%{box-shadow:inset 0 0 0 1px rgba(245,196,74,.35)}
+    50%    {box-shadow:inset 0 0 0 1px rgba(245,196,74,.7), 0 0 24px rgba(245,196,74,.4), 0 0 40px rgba(230,58,47,.2)}
+  }
+
+  /* Brief "equipped" flash on Enter */
+  .boon.equipped{animation:boonEquip .8s ease-out}
+  @keyframes boonEquip{
+    0%   {filter:brightness(1)}
+    20%  {filter:brightness(2) saturate(1.5)}
+    100% {filter:brightness(1)}
+  }
+
+  /* ===== Icon ambient animations per icon ===== */
+  /* Flame (boon I, legendary) — flicker */
+  .boons .boon[data-rarity="legendary"] .rune svg{
+    transform-origin:center bottom;
+    animation:iconFlicker 1.4s ease-in-out infinite;
+  }
+  @keyframes iconFlicker{
+    0%,100%{transform:scale(1,1) skewX(0)}
+    20%   {transform:scale(.96,1.06) skewX(-2deg)}
+    40%   {transform:scale(1.04,.97) skewX(1.5deg)}
+    60%   {transform:scale(.98,1.03) skewX(-1deg)}
+    80%   {transform:scale(1.02,.99) skewX(1deg)}
+  }
+  /* Book (boon II, heroic) — gentle page sheen + slight rock */
+  .boons .boon[data-rarity="heroic"] .rune svg{
+    transform-origin:center center;
+    animation:iconPageRock 2.6s ease-in-out infinite;
+  }
+  @keyframes iconPageRock{
+    0%,100%{transform:rotateY(0deg);filter:drop-shadow(0 0 0 currentColor)}
+    50%    {transform:rotateY(8deg);filter:drop-shadow(0 0 5px currentColor)}
+  }
+  /* Scroll (boon III, rare) — content scrolls / drifts */
+  .boons .boon[data-rarity="rare"] .rune svg{
+    animation:iconScroll 3s ease-in-out infinite;
+  }
+  @keyframes iconScroll{
+    0%,100%{transform:translateY(0)}
+    50%    {transform:translateY(-2.5px)}
+  }
+
+  /* ============== BOON DETAIL VIEW (expand on Enter/click) ============== */
+  /* Hidden by default — only the compact-view children are visible */
+  .boon .detail{display:none}
+
+  .boons.has-open{
+    /* Make grid expand to a single full-width track so .open card fills it */
+    grid-template-columns:1fr;
+  }
+  /* Non-open cards fade away */
+  .boons.has-open .boon:not(.open){
+    opacity:0;pointer-events:none;
+    transform: perspective(900px) scale(.85) translateZ(-20px);
+    /* hide them entirely from the grid */
+    position:absolute;width:0;height:0;padding:0;border:none;overflow:hidden;
+  }
+  .boons .boon.open{
+    grid-column:1 / -1;
+    cursor:default;
+    padding:28px 32px;
+    /* No tilt when open — reset rotateZ too. */
+    transform: perspective(1200px) rotateZ(0deg);
+    transition: all .45s cubic-bezier(.2,.7,.2,1);
+    border-color:var(--gold-bright);
+    margin-top:0;
+  }
+  .boons .boon.open[data-rarity="legendary"]{
+    box-shadow: 0 0 80px rgba(230,58,47,.4), 0 0 120px rgba(245,196,74,.18), inset 0 0 60px rgba(230,58,47,.12);
+  }
+  .boons .boon.open[data-rarity="heroic"]{
+    box-shadow: 0 0 80px rgba(245,196,74,.4), 0 0 120px rgba(245,196,74,.18), inset 0 0 60px rgba(245,196,74,.12);
+  }
+  .boons .boon.open[data-rarity="rare"]{
+    box-shadow: 0 0 80px rgba(95,184,201,.45), 0 0 120px rgba(95,184,201,.20), inset 0 0 60px rgba(95,184,201,.12);
+  }
+  /* When open: hide compact children, show detail */
+  .boons .boon.open .compact{display:none}
+  .boons .boon.open .detail{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:center}
+
+  /* Detail layout pieces */
+  .boon .detail .info{display:flex;flex-direction:column;gap:14px}
+  .boon .detail .breadcrumb{font-family:'IM Fell DW Pica SC',serif;font-size:11px;letter-spacing:.45em;color:var(--gold);opacity:.85}
+  .boon .detail h2{
+    font-family:'Cormorant Unicase',serif;font-style:italic;font-size:clamp(32px,3vw,46px);
+    line-height:1.05;color:var(--ivory);text-shadow:0 4px 18px rgba(0,0,0,.7);
+  }
+  .boon .detail h2 em{color:var(--gold);font-style:italic}
+  .boon .detail .lore{
+    font-family:'IM Fell English',serif;font-style:italic;color:var(--ivory-soft);
+    font-size:17px;line-height:1.55;
+  }
+  .boon .detail .lore em{color:var(--gold);font-style:italic}
+  .boon .detail .tech-label{font-family:'IM Fell DW Pica SC',serif;font-size:11px;letter-spacing:.4em;color:var(--gold);margin-top:6px}
+  .boon .detail .tech{display:flex;flex-wrap:wrap;gap:8px}
+  .boon .detail .tech span{
+    display:inline-flex;align-items:center;
+    padding:6px 12px;border:1px solid var(--gold-line);background:rgba(8,4,12,.5);
+    font-family:'IM Fell DW Pica SC',serif;font-size:10px;letter-spacing:.25em;color:var(--ivory-soft);
+  }
+  .boon .detail .actions{display:flex;gap:14px;margin-top:10px}
+  .boon .detail .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:14px 24px;
+    font-family:'IM Fell DW Pica SC',serif;font-size:11px;letter-spacing:.4em;color:var(--gold);
+    background:transparent;border:1.5px solid var(--gold);text-decoration:none;cursor:pointer;
+    transition:all .25s;
+  }
+  .boon .detail .btn:hover{background:rgba(245,196,74,.1);color:var(--gold-bright);box-shadow:0 0 24px rgba(245,196,74,.2)}
+  .boon .detail .btn.primary{background:rgba(230,58,47,.15);border-color:var(--blood)}
+  .boon .detail .btn.primary:hover{background:rgba(230,58,47,.28);box-shadow:0 0 30px rgba(230,58,47,.3);color:var(--ivory)}
+
+  .boon .detail .hero-frame{
+    position:relative;
+    height:min(440px, 58vh);
+    /* Glowing alcove: the screenshot floats framed at its OWN aspect inside,
+       so a portrait phone shot no longer letterboxes in a wide bordered box. */
+    background:radial-gradient(ellipse at 50% 45%, rgba(245,196,74,.10), transparent 65%);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .boon .detail .hero-frame img{
+    /* Frame hugs the image's true aspect → a device-bezel for any shot. */
+    max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;
+    background:linear-gradient(160deg,#1c1228,#0a060f);
+    padding:8px;border:1px solid var(--gold-line);border-radius:20px;
+    box-shadow:0 18px 48px rgba(0,0,0,.72), 0 0 0 1px rgba(245,196,74,.18), 0 0 60px rgba(245,196,74,.10);
+  }
+
+  /* Action prompt below cards */
+  .boon-action{
+    position:relative;z-index:2;
+    margin-top:22px;text-align:center;
+    font-family:'IM Fell DW Pica SC',serif;font-size:11px;letter-spacing:.35em;color:var(--gold);opacity:.9;
+  }
+  .boon-action .key{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:24px;height:24px;padding:0 8px;border-radius:12px;
+    border:1.5px solid var(--gold);background:rgba(8,4,12,.6);
+    font-family:'IM Fell DW Pica SC',serif;font-size:10px;font-weight:600;
+    margin:0 6px;vertical-align:middle;
+  }
+  .boon-action .sep{margin:0 18px;color:var(--gold-deep)}
+  .boon .sigil-wrap{display:flex;justify-content:center;margin-bottom:14px}
+  .boon .sigil{width:92px;height:92px;border-radius:50%;background:radial-gradient(circle at center, rgba(245,196,74,.25) 0%, rgba(245,196,74,0) 65%);
+    display:flex;align-items:center;justify-content:center;border:1px solid rgba(245,196,74,.35);overflow:hidden}
+  /* Per-rarity sigil sizing — legendary is visibly bigger, heroic is mid, rare is small */
+  .boon[data-rarity="legendary"] .sigil{width:124px;height:124px;border-color:rgba(230,58,47,.55);background:radial-gradient(circle at center, rgba(230,58,47,.32), rgba(245,196,74,.10) 45%, transparent 70%)}
+  .boon[data-rarity="heroic"]    .sigil{width:96px;height:96px}
+  .boon[data-rarity="rare"]      .sigil{width:80px;height:80px;border-color:rgba(95,184,201,.55);background:radial-gradient(circle at center, rgba(95,184,201,.28), transparent 65%)}
+  /* Default: screenshot images get cropped to fill the circle */
+  .boon .sigil img{width:100%;height:100%;object-fit:cover;object-position:center}
+  /* Painted sigil variant: the emblem already carries its own ring and
+     composition. Drop the wrapper's gold ring + radial glow so the painted
+     piece is the only visible element. Slight drop-shadow lifts it from the
+     panel. The sigil "floats" rather than sitting inside a CSS frame. */
+  .boon .sigil.painted-sigil{border:none;background:transparent;overflow:visible;
+    filter:drop-shadow(0 4px 14px rgba(0,0,0,.55)) drop-shadow(0 0 18px rgba(245,196,74,.18))}
+  .boon .sigil.painted-sigil img{width:118%;height:118%;
+    object-fit:contain;object-position:center;transform:translate(-9%,-9%)}
+  /* Painted sigils float without a frame, so sigilGlow's inset box-shadow ring
+     drew a circle at the .sigil bounds — disconnected from the (smaller) emblem
+     on hover. Glow instead with a drop-shadow aura that hugs the emblem's own
+     transparent silhouette. Higher specificity overrides .boon.on .sigil. */
+  .boon.on .sigil.painted-sigil{box-shadow:none;animation:paintedSigilGlow 1.8s ease-in-out infinite}
+  @keyframes paintedSigilGlow{
+    0%,100%{filter:drop-shadow(0 4px 14px rgba(0,0,0,.55)) drop-shadow(0 0 18px rgba(245,196,74,.22))}
+    50%    {filter:drop-shadow(0 4px 14px rgba(0,0,0,.55)) drop-shadow(0 0 26px rgba(245,196,74,.55)) drop-shadow(0 0 42px rgba(230,58,47,.3))}
+  }
+  /* Legendary card gets larger name; rare card slightly smaller */
+  .boon .name{font-family:'Cormorant Unicase',serif;font-style:italic;font-size:26px;color:var(--ivory);text-align:center;line-height:1.05}
+  .boon[data-rarity="legendary"] .name{font-size:32px}
+  .boon[data-rarity="rare"]      .name{font-size:22px}
+  /* Subtle background tint per rarity — pomegranate red bleed for legendary,
+     cool cyan wash for rare; the heroic card keeps the gold center */
+  .boon[data-rarity="legendary"]{
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(230,58,47,.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 100%, rgba(245,196,74,.10) 0%, transparent 60%),
+      linear-gradient(180deg,#241228 0%, #0a060f 100%);
+  }
+  .boon[data-rarity="rare"]{
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(95,184,201,.15) 0%, transparent 60%),
+      linear-gradient(180deg,#0f1422 0%, #0a060f 100%);
+  }
+  .boon .name em{color:var(--gold);font-style:italic}
+  .boon .meta{margin-top:6px;text-align:center;font-family:'IM Fell DW Pica SC',serif;font-size:10px;letter-spacing:.32em;color:var(--gold)}
+  .boon .meta .legendary{color:var(--blood)}
+  .boon .meta .heroic{color:var(--gold)}
+  .boon .meta .rare{color:var(--cyan)}
+  .boon .divkey{height:14px;margin:14px 0;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='14' viewBox='0 0 48 14'><g fill='none' stroke='%23a8782b' stroke-width='1.2'><path d='M0 12 L0 4 L10 4 L10 10 L4 10 L4 7 L7 7'/><path d='M14 12 L14 4 L24 4 L24 10 L18 10 L18 7 L21 7'/><path d='M28 12 L28 4 L38 4 L38 10 L32 10 L32 7 L35 7'/><path d='M42 12 L42 4 L48 4'/></g></svg>");background-repeat:repeat-x;background-size:48px 14px}
+  .boon .desc{font-family:'IM Fell English',serif;font-style:italic;color:var(--ivory-soft);font-size:15px;line-height:1.5;text-align:center}
+  .boon .desc em{color:var(--gold);font-style:italic}
+  .boon .effect{margin-top:12px;text-align:center;font-family:'IM Fell English',serif;font-style:italic;font-size:15px;color:var(--ivory)}
+  .boon .effect .num{color:var(--gold);font-family:'Cormorant Unicase',serif;font-style:italic;font-size:18px}
+  .boon .cta{margin-top:16px;display:block;text-align:center;font-family:'IM Fell DW Pica SC',serif;font-size:11px;letter-spacing:.4em;color:var(--gold);border-top:1px solid var(--gold-line);padding-top:14px}
+  .boon .cta::before{content:"⊕  "}
+
+  /* ============== CODEX ============== */
+  .codex-box{display:grid;grid-template-columns:1.05fr 1fr;gap:0;
+    background:linear-gradient(180deg,#1a0f24 0%, #0a060f 100%);
+    border:1px solid var(--gold-line);position:relative;overflow:hidden;flex:1;min-height:0;
+  }
+  .codex-box::before,.codex-box::after,.codex-box > .br::before,.codex-box > .br::after{content:"";position:absolute;width:24px;height:24px;border:2px solid var(--gold);pointer-events:none}
+  .codex-box::before{top:-2px;left:-2px;border-right:none;border-bottom:none}
+  .codex-box::after{top:-2px;right:-2px;border-left:none;border-bottom:none}
+  .br{position:absolute;inset:0;pointer-events:none;display:block}
+  .codex-box > .br::before{bottom:-2px;left:-2px;border-right:none;border-top:none}
+  .codex-box > .br::after{bottom:-2px;right:-2px;border-left:none;border-top:none}
+  /* Codex left: journal-page layout. Subtle vellum tint on top of the dark
+     panel + drop-cap on first paragraph + signature line + pomegranate cluster.
+     No stat block — that was a Dragon Age sheet, not a Hades codex. */
+  .codex-left{padding:24px 44px;position:relative;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;min-height:0;
+    background:
+      radial-gradient(ellipse at 0% 0%, rgba(245,196,74,.05) 0%, transparent 55%),
+      linear-gradient(180deg, rgba(245,196,74,.02), transparent 30%);
+  }
+  .codex-left::after{content:"";position:absolute;top:24px;bottom:24px;right:0;width:1px;background:linear-gradient(180deg,transparent,var(--gold-line),transparent)}
+  .codex-left::-webkit-scrollbar{width:6px}
+  .codex-left::-webkit-scrollbar-thumb{background:var(--gold-deep);border-radius:3px}
+  .codex-left .tag{font-family:'IM Fell DW Pica SC',serif;color:var(--gold);font-size:12px;letter-spacing:.42em;margin-bottom:10px}
+  .codex-left h3{
+    font-family:'Cormorant Unicase',serif;font-style:italic;font-weight:700;
+    font-size:clamp(28px, 2.6vw, 44px);
+    color:var(--ivory);line-height:1.08;
+  }
+  .codex-left h3 em{color:var(--gold);font-style:italic}
+  .codex-left .lead{
+    margin-top:13px;font-family:'IM Fell English',serif;font-style:italic;color:var(--ivory-soft);
+    font-size:clamp(16px, 1.1vw, 19px);line-height:1.52;
+  }
+  .codex-left .lead em{color:var(--gold);font-style:italic}
+  .codex-left .lead p + p{margin-top:9px}
+  /* Journal-style drop cap on the very first paragraph */
+  .codex-left .lead p:first-of-type::first-letter{
+    font-family:'Cormorant Unicase',serif;font-weight:700;font-style:normal;
+    float:left;font-size:3.6em;line-height:.85;padding:6px 10px 0 0;
+    color:var(--blood);text-shadow:0 1px 0 rgba(230,58,47,.4), 0 0 14px rgba(230,58,47,.35);
+  }
+  /* Signature line — replaces the stat grid */
+  .codex-left .signature{
+    margin-top:auto;padding-top:14px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+    font-family:'IM Fell English',serif;font-style:italic;color:var(--ivory-soft);
+    font-size:14px;letter-spacing:.02em;
+    border-top:1px solid rgba(245,196,74,.15);
+  }
+  .codex-left .signature .by{flex:1;line-height:1.4}
+  .codex-left .signature .by em{color:var(--gold);font-style:italic}
+  /* Painted pomegranate seed cluster — nano-banana illustration. PNG carries
+     a slight light halo around the seeds; we live with it (acceptable at this
+     small size) and lean on the drop-shadow to ground it. */
+  .codex-left .pomegranate-painted{
+    display:block;width:80px;height:auto;align-self:flex-end;
+    transform:rotate(-6deg);opacity:.92;
+    filter:drop-shadow(0 4px 10px rgba(0,0,0,.6)) drop-shadow(0 0 10px rgba(230,58,47,.35));
+  }
+  .codex-right{position:relative;overflow:hidden;background:radial-gradient(ellipse at 60% 70%, rgba(245,196,74,.16) 0%, transparent 55%),linear-gradient(180deg,#180e2a 0%, #0a060f 100%)}
+  .codex-right .label{position:absolute;top:20px;left:20px;font-family:'IM Fell DW Pica SC',serif;font-size:10px;letter-spacing:.45em;color:var(--gold)}
+  .codex-right .name{position:absolute;bottom:26px;left:0;right:0;text-align:center;font-family:'Cormorant Unicase',serif;font-style:italic;color:var(--ivory);font-size:26px}
+  .codex-right .name small{display:block;font-size:11px;letter-spacing:.3em;color:var(--gold);margin-top:6px;font-style:normal;font-family:'IM Fell DW Pica SC',serif}
+  .codex-right .portrait{position:absolute;left:50%;bottom:0;transform:translateX(-50%);height:94%;width:auto;
+    filter:drop-shadow(0 0 40px rgba(245,196,74,.28)) drop-shadow(0 10px 20px rgba(0,0,0,.5));animation:bob 5s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-6px)}}
+
+  /* ============== CONTRACTS ============== */
+  .contracts-box{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--gold-line);background:linear-gradient(180deg,#190d22 0%, #0a060f 100%);position:relative;flex:1;min-height:0;overflow:hidden}
+  .contracts-box::before,.contracts-box::after,.contracts-box > .br::before,.contracts-box > .br::after{content:"";position:absolute;width:24px;height:24px;border:2px solid var(--gold);pointer-events:none}
+  .contracts-box::before{top:-2px;left:-2px;border-right:none;border-bottom:none}
+  .contracts-box::after{top:-2px;right:-2px;border-left:none;border-bottom:none}
+  .contracts-box > .br::before{bottom:-2px;left:-2px;border-right:none;border-top:none}
+  .contracts-box > .br::after{bottom:-2px;right:-2px;border-left:none;border-top:none}
+  .nyx-side{position:relative;overflow:hidden;background:radial-gradient(ellipse at 70% 60%, rgba(230,58,47,.18) 0%, transparent 60%)}
+  .nyx-side img{position:absolute;left:58%;bottom:0;height:94%;filter:drop-shadow(0 0 40px rgba(245,196,74,.4));animation:bob 5s ease-in-out infinite;transform-origin:50% 100%}
+  .nyx-side .qt{position:absolute;left:28px;top:28px;width:42%;font-family:'IM Fell English',serif;font-style:italic;color:var(--ivory-soft);font-size:17px;line-height:1.5;z-index:2}
+  .nyx-side .qt::before{content:"❝ ";color:var(--gold);font-size:30px;line-height:0;vertical-align:-8px}
+  .nyx-side .qt cite{display:block;margin-top:14px;font-style:normal;font-family:'IM Fell DW Pica SC',serif;font-size:11px;letter-spacing:.4em;color:var(--gold)}
+  .form-side{padding:36px 44px;position:relative;display:flex;flex-direction:column;justify-content:center;gap:18px}
+  .form-side h3{font-family:'Cormorant Unicase',serif;font-style:italic;font-size:clamp(26px,2.2vw,34px);color:var(--ivory)}
+  .form-side h3 em{color:var(--gold);font-style:italic}
+  .form-side .sub{font-family:'IM Fell English',serif;font-style:italic;color:var(--ivory-soft);font-size:17px;line-height:1.5}
+  .form-side .sub em{color:var(--gold);font-style:italic}
+
+  /* Availability badge with pulsing dot */
+  .avail{
+    display:inline-flex;align-items:center;gap:12px;align-self:flex-start;
+    padding:8px 16px;border:1px solid var(--gold-line);
+    background:rgba(8,4,12,.5);
+    font-family:'IM Fell DW Pica SC',serif;font-size:11px;letter-spacing:.35em;color:var(--gold);
+  }
+  .avail .dot{
+    width:8px;height:8px;border-radius:50%;background:#4adc7a;
+    box-shadow:0 0 8px #4adc7a;animation:availPulse 1.5s ease-in-out infinite;
+  }
+  @keyframes availPulse{0%,100%{box-shadow:0 0 4px #4adc7a;transform:scale(1)}50%{box-shadow:0 0 16px #4adc7a;transform:scale(1.2)}}
+
+  /* Primary "Dispatch a Raven" button — wax-seal stamp on the left,
+     pressed-into-parchment feel via inset shadow + radial bleed. */
+  .raven-btn{
+    display:flex;align-items:center;gap:18px;
+    padding:14px 22px 14px 14px;text-decoration:none;
+    background:
+      radial-gradient(ellipse at 18% 50%, rgba(230,58,47,.32), transparent 55%),
+      linear-gradient(90deg, rgba(40,16,20,.85) 0%, rgba(28,18,40,.7) 60%, rgba(10,6,15,.7) 100%);
+    border:1.5px solid var(--blood-deep);position:relative;cursor:pointer;
+    transition:all .25s cubic-bezier(.22,1,.36,1);
+  }
+  .raven-btn:hover{
+    border-color:var(--blood);
+    box-shadow:0 0 30px rgba(230,58,47,.30);
+    transform:translateY(-2px);
+  }
+  /* Wax-seal disc — round, blood-red, gold-ringed, embossed envelope inside */
+  .raven-btn .seal{
+    width:56px;height:56px;border-radius:50%;flex:none;
+    background:
+      radial-gradient(circle at 30% 28%, rgba(255,180,160,.55), transparent 35%),
+      radial-gradient(circle at center, var(--blood) 0%, var(--blood-deep) 60%, #4a0c0c 100%);
+    border:1.5px solid var(--gold);
+    box-shadow:
+      inset 0 -2px 4px rgba(0,0,0,.55),
+      inset 0 2px 3px rgba(255,200,180,.25),
+      0 0 0 1px rgba(245,196,74,.25),
+      0 0 18px rgba(230,58,47,.45);
+    display:flex;align-items:center;justify-content:center;
+    transform:rotate(-6deg);
+    transition:transform .25s cubic-bezier(.22,1,.36,1);
+  }
+  .raven-btn:hover .seal{transform:rotate(2deg) scale(1.04)}
+  .raven-btn .seal svg{width:26px;height:26px;
+    filter:drop-shadow(0 1px 0 rgba(0,0,0,.5)) drop-shadow(0 -1px 0 rgba(255,200,180,.25))}
+  .raven-btn .seal svg path{stroke:var(--gold-bright);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .raven-btn .seal-text{display:flex;flex-direction:column;gap:3px;line-height:1.1;flex:1;min-width:0}
+  .raven-btn .lbl{font-family:'IM Fell DW Pica SC',serif;font-size:12px;letter-spacing:.4em;color:var(--gold-bright)}
+  .raven-btn .addr{font-family:'IM Fell English',serif;font-style:italic;font-size:17px;color:var(--ivory);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .raven-btn .arrow{color:var(--gold);font-family:'IM Fell DW Pica SC',serif;font-size:22px;transition:transform .2s;flex:none;margin-left:6px}
+  .raven-btn:hover .arrow{transform:translateX(4px)}
+
+  /* Secondary contact links */
+  .channels{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px}
+  .channel{
+    display:flex;align-items:center;gap:12px;
+    padding:14px 16px;text-decoration:none;
+    background:linear-gradient(180deg, rgba(28,18,40,.7), rgba(10,6,15,.9));
+    border:1px solid var(--gold-line);
+    transition:all .25s;
+  }
+  .channel:hover{border-color:var(--gold);background:linear-gradient(180deg, rgba(40,24,52,.8), rgba(20,10,28,.95));box-shadow:0 0 18px rgba(245,196,74,.15)}
+  .channel .ico{width:32px;height:32px;border:1px solid var(--gold);background:#000;display:flex;align-items:center;justify-content:center;color:var(--gold);font-family:'IM Fell DW Pica SC',serif;font-size:12px}
+  .channel .meta{display:flex;flex-direction:column;line-height:1.2;min-width:0;overflow:hidden}
+  .channel .meta .k{font-family:'IM Fell DW Pica SC',serif;font-size:10px;letter-spacing:.3em;color:var(--gold)}
+  .channel .meta .v{font-family:'IM Fell English',serif;font-style:italic;font-size:14px;color:var(--ivory-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* Footnote line */
+  .hours{
+    margin-top:4px;font-family:'IM Fell English',serif;font-style:italic;
+    font-size:13px;color:var(--ivory-soft);opacity:.7;letter-spacing:.04em;
+  }
+  .hours em{color:var(--gold);font-style:italic}
+
+  /* ============== MIRROR OF NIGHT (skills tree) ============== */
+  .mirror-box{
+    display:grid;grid-template-columns: 1fr 1.08fr;gap:0;
+    border:1px solid var(--gold-line);background:linear-gradient(180deg,#180e2a 0%, #0a060f 100%);
+    position:relative;flex:1;min-height:0;overflow:hidden;
+  }
+  .mirror-box::before,.mirror-box::after,.mirror-box > .br::before,.mirror-box > .br::after{
+    content:"";position:absolute;width:24px;height:24px;border:2px solid var(--gold);pointer-events:none;
+  }
+  .mirror-box::before{top:-2px;left:-2px;border-right:none;border-bottom:none}
+  .mirror-box::after{top:-2px;right:-2px;border-left:none;border-bottom:none}
+  .mirror-box > .br::before{bottom:-2px;left:-2px;border-right:none;border-top:none}
+  .mirror-box > .br::after{bottom:-2px;right:-2px;border-left:none;border-top:none}
+
+  .mirror-left{padding:28px 36px;overflow:auto;display:flex;flex-direction:column;gap:18px}
+  .mirror-left::-webkit-scrollbar{width:6px}
+  .mirror-left::-webkit-scrollbar-thumb{background:var(--gold-deep)}
+  .mirror-cat{}
+  .mirror-cat .cat-name{
+    font-family:'IM Fell DW Pica SC',serif;font-size:11px;letter-spacing:.45em;color:var(--gold);
+    padding-bottom:6px;border-bottom:1px solid var(--gold-line);margin-bottom:10px;
+  }
+  .mirror-cat .talents{display:flex;flex-direction:column}
+  /* Talent rows: no side-stripe borders. Selection signaled by a painted
+     full-bleed tint + a tiny pomegranate-seed marker, not a left edge bar. */
+  .talent{
+    display:grid;grid-template-columns: 1fr auto;align-items:center;gap:14px;
+    padding:9px 14px;cursor:pointer;position:relative;
+    transition:background .15s;
+  }
+  .talent:hover{background:rgba(245,196,74,.06)}
+  .talent.on{
+    background:
+      radial-gradient(ellipse at 0% 50%, rgba(230,58,47,.22), transparent 70%),
+      linear-gradient(90deg, rgba(230,58,47,.10), rgba(8,4,12,.0) 80%);
+  }
+  /* Pomegranate-seed selection marker — left of the row, no stripe */
+  .talent.on::before{
+    content:"";position:absolute;left:2px;top:50%;width:6px;height:9px;
+    transform:translateY(-50%) rotate(-12deg);
+    background:radial-gradient(ellipse at 35% 30%, var(--blood) 0%, var(--blood-deep) 70%);
+    border-radius:60% 60% 50% 50% / 70% 70% 40% 40%;
+    box-shadow:0 0 6px rgba(230,58,47,.55), inset 0 -1px 1px rgba(0,0,0,.4);
+  }
+  .talent .name{font-family:'IM Fell DW Pica SC',serif;font-size:13px;letter-spacing:.18em;color:var(--ivory)}
+  .talent.on .name{color:var(--gold-bright)}
+  /* Painted gemstone facets — hexagonal cut-stone shapes replacing the dot orbs.
+     Empty stones are gold-stroke outline only; filled stones glow with an
+     inner-light gradient. Slight irregular tilt per stone reads as hand-cut. */
+  .orbs{display:inline-flex;gap:5px}
+  .orbs i{
+    width:11px;height:13px;display:block;position:relative;
+    clip-path:polygon(50% 0%, 92% 26%, 92% 74%, 50% 100%, 8% 74%, 8% 26%);
+    background:transparent;
+    box-shadow:inset 0 0 0 1px var(--gold-deep);
+  }
+  .orbs i:nth-child(2){transform:rotate(4deg)}
+  .orbs i:nth-child(3){transform:rotate(-3deg)}
+  .orbs i:nth-child(4){transform:rotate(6deg)}
+  .orbs i:nth-child(5){transform:rotate(-2deg)}
+  .orbs i.f{
+    background:
+      radial-gradient(ellipse at 30% 25%, rgba(255,232,180,.95), transparent 45%),
+      linear-gradient(160deg, var(--gold-bright) 0%, var(--gold) 45%, var(--gold-deep) 100%);
+    box-shadow:
+      inset 0 0 0 1px var(--gold-bright),
+      0 0 6px rgba(245,196,74,.6),
+      0 0 12px rgba(245,196,74,.25);
+  }
+  .talent.on .orbs i.f{
+    background:
+      radial-gradient(ellipse at 30% 25%, rgba(255,210,180,.9), transparent 45%),
+      linear-gradient(160deg, #ffd7a5 0%, var(--gold-bright) 40%, var(--blood) 100%);
+    box-shadow:
+      inset 0 0 0 1px var(--gold-bright),
+      0 0 8px rgba(230,58,47,.5),
+      0 0 14px rgba(245,196,74,.3);
+  }
+
+  .mirror-right{
+    position:relative;overflow:hidden;
+    padding:44px 56px;border-left:1px solid var(--gold-line);
+    background:radial-gradient(ellipse at 70% 30%, rgba(245,196,74,.10), transparent 55%);
+    display:flex;flex-direction:column;justify-content:safe center;gap:12px;
+  }
+  /* Painted Mirror-of-Night oval frame as an overlay. The PNG has a solid
+     black interior + solid black exterior; mix-blend-mode: screen drops all
+     black pixels, leaving only the gold filigree. Extended beyond the panel
+     bounds so the open oval center holds the text, not the gold edge.
+     The parent .mirror-box has overflow:hidden so the overflow gets clipped. */
+  .mirror-right .mirror-frame-overlay{
+    position:absolute;
+    top:-42px;left:-74px;
+    width:calc(100% + 148px);height:calc(100% + 96px);
+    object-fit:cover;object-position:center;
+    pointer-events:none;z-index:0;
+    mix-blend-mode:screen;
+    filter:drop-shadow(0 0 16px rgba(245,196,74,.25));
+  }
+  /* Lift all text content above the frame, and keep it in a centered column
+     that stays inside the oval's clear opening — never under the gold filigree,
+     no matter how wide the panel gets. */
+  .mirror-right > *:not(.mirror-frame-overlay){position:relative;z-index:1;width:100%;max-width:390px;margin-left:auto;margin-right:auto}
+  .mirror-right .tag{font-family:'IM Fell DW Pica SC',serif;font-size:11px;letter-spacing:.45em;color:var(--gold)}
+  .mirror-right h3{font-family:'Cormorant Unicase',serif;font-style:italic;font-size:clamp(28px,2.4vw,40px);color:var(--ivory);line-height:1.05}
+  .mirror-right h3 em{color:var(--gold);font-style:italic}
+  .mirror-right .meta{display:flex;gap:24px;font-family:'IM Fell DW Pica SC',serif;font-size:10px;letter-spacing:.35em;color:var(--gold-deep)}
+  .mirror-right .meta span strong{color:var(--ivory);font-family:'Cormorant Unicase',serif;font-style:italic;font-weight:400;font-size:14px;margin-left:8px;letter-spacing:.04em}
+  .mirror-right .desc{font-family:'IM Fell English',serif;font-style:italic;color:var(--ivory-soft);font-size:clamp(16px,1.1vw,19px);line-height:1.55}
+  .mirror-right .desc em{color:var(--gold);font-style:italic}
+  .mirror-right .used-label{font-family:'IM Fell DW Pica SC',serif;font-size:11px;letter-spacing:.4em;color:var(--gold);margin-top:6px}
+  .mirror-right .used{display:flex;flex-wrap:wrap;gap:8px}
+  .mirror-right .used span{
+    padding:5px 11px;border:1px solid var(--gold-line);background:rgba(8,4,12,.5);
+    font-family:'IM Fell DW Pica SC',serif;font-size:10px;letter-spacing:.25em;color:var(--ivory-soft);
+  }
+  .mirror-totals{
+    margin-top:20px;display:flex;justify-content:space-between;align-items:center;
+    padding-top:14px;border-top:1px solid rgba(245,196,74,.18);
+    font-family:'IM Fell DW Pica SC',serif;font-size:11px;letter-spacing:.35em;color:var(--gold-deep);
+  }
+  .mirror-totals .v{color:var(--gold);font-family:'Cormorant Unicase',serif;font-style:italic;font-size:18px;margin-left:8px}
+
+  /* ============== SITES OF GRACE (timeline) ============== */
+  .grace-box{
+    display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;
+    border:1px solid var(--gold-line);background:linear-gradient(180deg,#1a0f24 0%, #0a060f 100%);
+    position:relative;padding:20px 48px;
+  }
+  .grace-box::before,.grace-box::after,.grace-box > .br::before,.grace-box > .br::after{
+    content:"";position:absolute;width:24px;height:24px;border:2px solid var(--gold);pointer-events:none;
+  }
+  .grace-box::before{top:-2px;left:-2px;border-right:none;border-bottom:none}
+  .grace-box::after{top:-2px;right:-2px;border-left:none;border-bottom:none}
+  .grace-box > .br::before{bottom:-2px;left:-2px;border-right:none;border-top:none}
+  .grace-box > .br::after{bottom:-2px;right:-2px;border-left:none;border-top:none}
+
+  .grace-rail{
+    position:relative;flex:1;min-height:0;overflow:hidden;
+    padding:2px 0 2px 60px;display:flex;flex-direction:column;gap:0;
+  }
+
+  .grace{
+    position:relative;display:grid;grid-template-columns: 80px 1fr; gap:20px;align-items:center;
+    /* each entry stretches to share the available height equally */
+    flex:1 1 0;min-height:0;
+    padding:6px 0;z-index:1;
+  }
+  .grace + .grace{border-top:1px dashed rgba(245,196,74,.10)}
+  .grace .flame{
+    position:absolute;left:-58px;top:50%;transform:translateY(-50%);
+    width:58px;height:58px;
+    display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at center, rgba(245,196,74,.32), transparent 65%);
+    border-radius:50%;
+  }
+  /* Painted brazier — replaces the SVG flame with a nano-banana illustration
+     that matches the Hades art reference. Drop-shadow gives it the
+     cut-out-from-the-void feel. Gentle flicker animation since it IS a flame. */
+  .grace .flame img{width:56px;height:auto;position:relative;z-index:2;
+    filter:drop-shadow(0 0 12px rgba(245,140,30,.65)) drop-shadow(0 3px 6px rgba(0,0,0,.6));
+    animation:brazierFlicker 2.4s ease-in-out infinite;transform-origin:50% 80%}
+  @keyframes brazierFlicker{
+    0%,100%{transform:scale(1) translateY(0);filter:drop-shadow(0 0 8px rgba(245,140,30,.55)) drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+    35%    {transform:scale(1.03,.98) translateY(-1px);filter:drop-shadow(0 0 14px rgba(255,180,80,.75)) drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+    65%    {transform:scale(.98,1.02) translateY(0);filter:drop-shadow(0 0 10px rgba(230,80,30,.55)) drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+  }
+  .grace.now .flame::after{
+    content:"";position:absolute;inset:-6px;border-radius:50%;border:1px solid var(--gold);
+    animation:gracePulse 2s ease-in-out infinite;
+  }
+  @keyframes gracePulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.25);opacity:0}}
+
+  .grace .year{font-family:'Cormorant Unicase',serif;font-style:italic;font-size:clamp(22px,1.7vw,28px);color:var(--gold);line-height:1}
+  .grace .year .roman{display:block;font-size:9px;letter-spacing:.45em;color:var(--gold-deep);margin-top:4px;font-style:normal;font-family:'IM Fell DW Pica SC',serif}
+  .grace .info h4{font-family:'Cormorant Unicase',serif;font-style:italic;font-size:clamp(16px,1.3vw,20px);color:var(--ivory);line-height:1.15}
+  .grace .info h4 em{color:var(--gold);font-style:italic}
+  .grace .info p{margin-top:4px;font-family:'IM Fell English',serif;font-style:italic;color:var(--ivory-soft);font-size:clamp(12px,.85vw,14px);line-height:1.4}
+  .grace .info p em{color:var(--gold);font-style:italic}
+  .grace .info .tags{margin-top:6px;display:flex;flex-wrap:wrap;gap:5px}
+  .grace .info .tags span{
+    padding:3px 9px;border:1px solid var(--gold-line);background:rgba(8,4,12,.5);
+    font-family:'IM Fell DW Pica SC',serif;font-size:8px;letter-spacing:.25em;color:var(--ivory-soft);
+  }
+  .grace.now .info h4::after{
+    content:"  ◆ NOW";font-family:'IM Fell DW Pica SC',serif;font-size:9px;letter-spacing:.4em;color:var(--blood);font-style:normal;
+  }
+
+  /* ============== SOULS (socials) ============== */
+  .souls-box{display:grid;grid-template-columns:1fr 1.4fr;gap:0;border:1px solid var(--gold-line);background:linear-gradient(180deg,#180e2a 0%, #0a060f 100%);position:relative;flex:1;min-height:0;overflow:hidden}
+  .souls-box::before,.souls-box::after,.souls-box > .br::before,.souls-box > .br::after{content:"";position:absolute;width:24px;height:24px;border:2px solid var(--gold);pointer-events:none}
+  .souls-box::before{top:-2px;left:-2px;border-right:none;border-bottom:none}
+  .souls-box::after{top:-2px;right:-2px;border-left:none;border-bottom:none}
+  .souls-box > .br::before{bottom:-2px;left:-2px;border-right:none;border-top:none}
+  .souls-box > .br::after{bottom:-2px;right:-2px;border-left:none;border-top:none}
+  .meg-side{position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 60%, rgba(230,58,47,.18) 0%, transparent 55%)}
+  .meg-side img{position:absolute;left:50%;bottom:0;transform:translateX(-50%);height:92%;filter:drop-shadow(0 0 40px rgba(230,58,47,.35));animation:bob 5s ease-in-out infinite;transform-origin:50% 100%}
+  .meg-side .tag{position:absolute;top:18px;left:18px;font-family:'IM Fell DW Pica SC',serif;font-size:10px;letter-spacing:.45em;color:var(--gold)}
+  .meg-side .nm{position:absolute;bottom:18px;left:0;right:0;text-align:center;font-family:'Cormorant Unicase',serif;font-style:italic;color:var(--ivory);font-size:22px}
+  .meg-side .nm small{display:block;font-size:10px;letter-spacing:.32em;color:var(--gold);margin-top:5px;font-style:normal;font-family:'IM Fell DW Pica SC',serif}
+  .souls-grid{padding:36px;display:grid;grid-template-columns:1fr 1fr;gap:18px;align-content:center}
+  .soul{position:relative;background:linear-gradient(180deg, rgba(28,18,40,.85) 0%, rgba(10,6,15,.95) 100%);border:1px solid var(--gold-line);padding:20px 22px;cursor:pointer;transition:all .25s;display:grid;grid-template-columns:48px 1fr auto;gap:14px;align-items:center}
+  .soul::before,.soul::after{content:"";position:absolute;width:14px;height:14px;border:2px solid var(--gold);pointer-events:none}
+  .soul::before{top:-2px;left:-2px;border-right:none;border-bottom:none}
+  .soul::after{bottom:-2px;right:-2px;border-left:none;border-top:none}
+  .soul:hover{border-color:var(--gold);background:linear-gradient(180deg, rgba(40,24,52,.95), rgba(20,10,28,.95));box-shadow:0 0 30px rgba(245,196,74,.15)}
+  .soul .ico{width:42px;height:42px;background:#000;border:1px solid var(--gold);color:var(--gold-bright);display:flex;align-items:center;justify-content:center;font-family:'IM Fell DW Pica SC',serif;font-size:16px}
+  .soul .name{font-family:'IM Fell DW Pica SC',serif;font-size:13px;letter-spacing:.3em;color:var(--ivory)}
+  .soul .name .sub{display:block;font-family:'IM Fell English',serif;font-style:italic;font-size:13px;color:var(--ivory-soft);letter-spacing:.04em;margin-top:3px;text-transform:none}
+  .soul .num{font-family:'Cormorant Unicase',serif;font-style:italic;font-size:18px;color:var(--gold)}
+  /* ===========================================================================
+     PHONE / NARROW PORTRAIT (<=680px)
+     The desktop build is a fixed single-viewport game menu. On phones we let each
+     screen scroll and stack every two-column panel into one column. Everything
+     above this breakpoint (laptops/tablets-landscape) is untouched.
+     =========================================================================== */
+  @media (max-width: 900px){
+    /* each fixed screen scrolls its own content; top-align since we now scroll */
+    .screen{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+    .scr{padding:18px 15px 92px;align-items:center}
+    .scr .head{flex-direction:column;align-items:flex-start;gap:4px;margin-bottom:14px;padding-bottom:10px}
+    .scr .head .h{font-size:28px}
+    .scr .head .crumbs{display:none}
+    .scr .body{justify-content:flex-start}
+    /* phones fill the width; tablet portrait keeps a readable centred column */
+    .scr .head,.scr .body{max-width:640px;width:100%}
+    .title-left,.title-right{max-width:640px;margin-left:auto;margin-right:auto;width:100%}
+
+    /* ---- Boot ---- */
+    .boot-stack{inset:24px 16px}
+    .boot-wordmark h1{font-size:46px}
+    .boot-char{height:40vh}
+    .boot-presents{font-size:9px;letter-spacing:.4em}
+
+    /* ---- Title ---- */
+    .title-screen{grid-template-columns:1fr;height:auto;min-height:100%}
+    .title-left{padding:18px 15px 26px;border-right:none;gap:14px;min-height:0}
+    .title-left::after{display:none}
+    h1.title{font-size:32px}
+    .crest .house-crest{width:46px;height:46px}
+    .menu{gap:9px}
+    .menu li{flex:none}
+    .menu a{min-height:60px;grid-template-columns:32px 1fr auto 10px;gap:10px;padding:0 12px}
+    .menu a .label{font-size:12px;letter-spacing:.18em}
+    .menu a .label .sub{font-size:11px}
+    .title-right{min-height:300px;border-top:1px solid var(--gold-line)}
+    .hero-char{height:280px}
+    .scion-stamp{display:none}
+
+    /* ---- Boons ---- */
+    .boons{grid-template-columns:1fr;gap:16px;max-width:none}
+    .boons .boon[data-rarity]{margin-top:0;--rz:0deg}
+    .boon{padding:20px 16px}
+    .boons.has-open .boon.open .detail{grid-template-columns:1fr;gap:16px}
+    .boon .detail .hero-frame{height:min(360px,44vh)}
+    .boon-prompt{font-size:15px;margin-bottom:16px}
+    .boon-action{font-size:10px}
+
+    /* ---- Codex ---- */
+    .codex-box{grid-template-columns:1fr;overflow:visible;flex:none}
+    .codex-left{overflow:visible;height:auto;padding:20px 18px}
+    .codex-left::after{display:none}
+    .codex-left h3{font-size:25px}
+    .codex-right{min-height:340px;border-top:1px solid var(--gold-line)}
+
+    /* ---- Contracts ---- (form first, herald band below) */
+    .contracts-box{grid-template-columns:1fr;overflow:visible;flex:none}
+    .form-side{order:0;padding:22px 18px}
+    .nyx-side{order:1;min-height:320px;border-top:1px solid var(--gold-line)}
+    .nyx-side .qt{display:none}
+    .channels{grid-template-columns:1fr}
+
+    /* ---- Mirror ---- (oval frame is a desktop flourish; drop it on phones) */
+    .mirror-box{grid-template-columns:1fr;overflow:visible;flex:none}
+    .mirror-left{overflow:visible;height:auto;padding:20px 18px}
+    .mirror-right{padding:24px 20px;border-left:none;border-top:1px solid var(--gold-line)}
+    .mirror-right .mirror-frame-overlay{display:none}
+    .mirror-right > *:not(.mirror-frame-overlay){max-width:none}
+
+    /* ---- Souls ---- (links first, warden band below) */
+    .souls-box{grid-template-columns:1fr;overflow:visible;flex:none}
+    .souls-grid{order:0;grid-template-columns:1fr;padding:22px 18px;gap:12px}
+    .meg-side{order:1;min-height:320px;border-top:1px solid var(--gold-line)}
+
+    /* ---- Chronicle / Grace ---- */
+    .grace-box{padding:16px 14px}
+    .grace-rail{padding:2px 0 2px 48px}
+    .grace{grid-template-columns:50px 1fr;gap:12px;flex:none;padding:12px 0}
+    .grace .flame{left:-48px;width:44px;height:44px}
+    .grace .flame img{width:40px}
+    .grace .year{font-size:19px}
+    .grace .info h4{font-size:15px}
+    .grace .info p{font-size:12px}
+  }
+</style>
+</head>
+<body data-screen="boot">
+
+<!-- =================== BOOT (Press Any Button) =================== -->
+<section class="screen boot-screen" data-name="boot">
+  <div class="key-top greek-key"></div>
+  <div class="canvas-host"><canvas data-canvas></canvas></div>
+
+  <img src="images/hades/hein-scion.webp" alt="" class="boot-char" />
+
+  <div class="boot-stack">
+    <div class="boot-top">
+      <div class="boot-presents">House of Rangsit Presents</div>
+      <div class="boot-wordmark"><h1>Hein <span class="htet">Htet</span> <span class="soe">Soe</span></h1></div>
+      <div class="boot-tag">A Scion of the Underworld</div>
+    </div>
+    <div class="boot-prompt">PRESS ANY BUTTON TO BEGIN</div>
+  </div>
+
+  <div class="key-bot greek-key"></div>
+</section>
+
+<!-- =================== TITLE SCREEN =================== -->
+<section class="screen title-screen" data-name="title">
+  <div class="key-top greek-key"></div>
+
+  <div class="title-left">
+    <div class="crest-bar">
+      <div class="crest">
+        <!-- Nano-banana painted House-of-Hades crest (skull + horns + laurel). -->
+        <img class="house-crest" src="sigils/house-crest.webp" alt="" />
+        <span>H · H · S</span>
+      </div>
+      <span class="epoch">EST. A.D. MMXXI</span>
+    </div>
+
+    <div class="title-block">
+      <h1 class="title">Hein <span class="htet">Htet</span> <span class="soe">Soe</span></h1>
+      <div class="epithet">Of Bangkok &amp; the Lower Halls · Patron of the Restless Loop</div>
+    </div>
+
+    <div class="select-label">SELECT A PATH</div>
+
+    <ol class="menu">
+      <li>
+        <a href="#boons" data-goto="boons" class="on">
+          <span class="num">I</span>
+          <span class="label">BOONS BESTOWED<span class="sub">Projects &amp; works wrought by hand</span></span>
+          <span class="rune" aria-hidden="true"><!-- gem / boon -->
+            <svg viewBox="0 0 24 24"><path d="M6 3 H18 L22 9 L12 21 L2 9 Z"/><path d="M2 9 H22"/><path d="M6 3 L9 9 L12 21"/><path d="M18 3 L15 9 L12 21"/></svg>
+          </span>
+          <span class="arrow">▸</span>
+        </a>
+      </li>
+      <li>
+        <a href="#codex" data-goto="codex">
+          <span class="num">II</span>
+          <span class="label">THE SCION'S CODEX<span class="sub">About — the chronicle of a scion</span></span>
+          <span class="rune" aria-hidden="true"><!-- open book -->
+            <svg viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+          </span>
+          <span class="arrow">▸</span>
+        </a>
+      </li>
+      <li>
+        <a href="#contracts" data-goto="contracts">
+          <span class="num">III</span>
+          <span class="label">HOUSE CONTRACTS<span class="sub">Hire — petition the lady of the night</span></span>
+          <span class="rune" aria-hidden="true"><!-- scroll -->
+            <svg viewBox="0 0 24 24"><path d="M15 12h-5"/><path d="M15 8h-5"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></svg>
+          </span>
+          <span class="arrow">▸</span>
+        </a>
+      </li>
+      <li>
+        <a href="#mirror" data-goto="mirror">
+          <span class="num">IV</span>
+          <span class="label">MIRROR OF NIGHT<span class="sub">Skills — talents unlocked &amp; in progress</span></span>
+          <span class="rune" aria-hidden="true"><!-- sparkles / mirror -->
+            <svg viewBox="0 0 24 24"><path d="M12 3 L13.5 9 L19 10.5 L13.5 12 L12 18 L10.5 12 L5 10.5 L10.5 9 Z"/><path d="M19 17 L19.7 19 L21.5 19.5 L19.7 20 L19 22 L18.3 20 L16.5 19.5 L18.3 19 Z"/><path d="M5 4 L5.5 5.5 L7 6 L5.5 6.5 L5 8 L4.5 6.5 L3 6 L4.5 5.5 Z"/></svg>
+          </span>
+          <span class="arrow">▸</span>
+        </a>
+      </li>
+      <li>
+        <a href="#grace" data-goto="grace">
+          <span class="num">V</span>
+          <span class="label">CHRONICLE OF RUNS<span class="sub">Journey — the long way home</span></span>
+          <span class="rune" aria-hidden="true"><!-- flame -->
+            <svg viewBox="0 0 24 24"><path d="M8.5 14.5 A 2.5 2.5 0 0 0 11 12 c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5 a 7 7 0 1 1 -14 0 c 0 -1.15 .43-2.29 1-3 a 2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+          </span>
+          <span class="arrow">▸</span>
+        </a>
+      </li>
+    </ol>
+  </div>
+
+  <div class="title-right">
+    <div class="rune-tag"><span class="d"></span><span class="rune-tag-text">MAIN MENU · I / IV</span></div>
+    <div class="rays"></div>
+    <div class="halo"></div>
+    <canvas class="embers" data-canvas></canvas>
+    <img src="images/hades/hein-scion.webp" alt="" class="hero-char" />
+  </div>
+
+  <div class="key-bot greek-key"></div>
+</section>
+
+<!-- =================== BOONS =================== -->
+<section class="screen scr" data-name="boons">
+  <div class="key-top greek-key"></div>
+  <div class="head">
+    <div class="h">I. <em>Boons Bestowed</em></div>
+    <div class="crumbs">menu <span class="sep">›</span> boons <span class="sep">›</span> selection</div>
+  </div>
+  <div class="body">
+    <div class="boons-canvas-host"><canvas data-canvas></canvas></div>
+
+    <p class="boon-prompt">Choose your <em>boon</em>, mortal — three are offered, only one may be wielded at once.</p>
+
+    <div class="boons">
+      <div class="boon" data-rarity="legendary" data-idx="0">
+        <span class="br"></span>
+        <div class="compact">
+          <div class="sigil-wrap"><div class="sigil painted-sigil"><img src="sigils/sigil-splitr.webp" alt=""/></div></div>
+          <div class="name"><em>Bill-Splitter's</em> Decree</div>
+          <div class="meta"><span class="legendary">LEGENDARY</span> · BOON OF SPLITR</div>
+          <div class="divkey"></div>
+          <div class="desc">A scrying mirror that divines a feast's bill among many — wrought of Next.js, charged with the sight of Gemini.</div>
+          <div class="effect"><span class="num" data-target="90" data-prefix="+" data-suffix="%">+0%</span> dignity preserved at any communal meal.</div>
+          <div class="cta">EQUIP THIS BOON</div>
+        </div>
+        <div class="detail">
+          <div class="info">
+            <div class="breadcrumb">BOON · I · LEGENDARY · OF SPLITR</div>
+            <h2><em>Bill-Splitter's</em> Decree</h2>
+            <p class="lore">A scrying mirror that divines a feast's bill among many. Photograph the receipt, tap who had what, despatch a payment link to each mortal. Built for the upper world's <em>communal meals</em>, where one tarnished is always burdened with the math.</p>
+            <div class="tech-label">FORGED OF</div>
+            <div class="tech">
+              <span>Next.js 16</span><span>React 19</span><span>TypeScript</span>
+              <span>Gemini Vision</span><span>Tailwind</span><span>Vercel</span>
+            </div>
+            <div class="actions">
+              <a class="btn primary" href="https://splitr-omega-hazel.vercel.app/" target="_blank" rel="noopener">OPEN THE TOME ⟶</a>
+              <a class="btn" href="https://github.com/callmeHeinHtet/splitr" target="_blank" rel="noopener">INSPECT THE CRAFT</a>
+            </div>
+          </div>
+          <div class="hero-frame"><img src="images/Splitr.webp" alt="" /></div>
+        </div>
+      </div>
+      <div class="boon" data-rarity="heroic" data-idx="1">
+        <span class="br"></span>
+        <div class="compact">
+          <div class="sigil-wrap"><div class="sigil painted-sigil"><img src="sigils/sigil-stay.webp" alt=""/></div></div>
+          <div class="name"><em>Innkeeper's</em> Ledger</div>
+          <div class="meta"><span class="heroic">HEROIC</span> · BOON OF STAY</div>
+          <div class="divkey"></div>
+          <div class="desc">A brutalist tome of lodgings, Flutter-forged and Firebase-anchored — shipped to all wanderers of the upper world.</div>
+          <div class="effect"><span class="num" data-target="7" data-prefix="+">+0</span> rooms divined per pass, <span class="num">∞</span> wanderers welcomed.</div>
+          <div class="cta">EQUIP THIS BOON</div>
+        </div>
+        <div class="detail">
+          <div class="info">
+            <div class="breadcrumb">BOON · II · HEROIC · OF STAY</div>
+            <h2><em>Innkeeper's</em> Ledger</h2>
+            <p class="lore">A brutalist tome of lodgings. <em>Flutter-forged</em> on the lower mortal plane, Firebase-anchored to the celestial vault. Bookings move with the directness of an empty corridor and the clarity of a single torch — shipped to every wanderer of the upper world.</p>
+            <div class="tech-label">FORGED OF</div>
+            <div class="tech">
+              <span>Flutter</span><span>Dart</span><span>Firebase</span>
+              <span>Firestore</span><span>Hosting</span>
+            </div>
+            <div class="actions">
+              <a class="btn primary" href="https://hotelbooking-95a05.web.app" target="_blank" rel="noopener">OPEN THE TOME ⟶</a>
+              <a class="btn" href="#" target="_blank" rel="noopener">INSPECT THE CRAFT</a>
+            </div>
+          </div>
+          <div class="hero-frame"><img src="images/Stay.webp" alt="" /></div>
+        </div>
+      </div>
+      <div class="boon" data-rarity="rare" data-idx="2">
+        <span class="br"></span>
+        <div class="compact">
+          <div class="sigil-wrap"><div class="sigil painted-sigil"><img src="sigils/sigil-chatbot.webp" alt=""/></div></div>
+          <div class="name"><em>Library</em> Oracle</div>
+          <div class="meta"><span class="rare">RARE</span> · BOON OF RSU</div>
+          <div class="divkey"></div>
+          <div class="desc">An attendant for the scriptorium of Rangsit — answers patrons in the riso-comic tongue of Gemini Flash.</div>
+          <div class="effect"><span class="num" data-target="6" data-prefix="+">+0</span> queries answered per breath, in dual tongue.</div>
+          <div class="cta">EQUIP THIS BOON</div>
+        </div>
+        <div class="detail">
+          <div class="info">
+            <div class="breadcrumb">BOON · III · RARE · OF RSU</div>
+            <h2><em>Library</em> Oracle</h2>
+            <p class="lore">An attendant for the scriptorium of <em>Rangsit University</em>. Answers patrons' queries in the dual tongue of Thai and English, rendered in the riso-comic style — quick, irreverent, and never weary.</p>
+            <div class="tech-label">FORGED OF</div>
+            <div class="tech">
+              <span>Vanilla JS</span><span>Express</span><span>Gemini 2.5 Flash</span>
+              <span>Riso-Comic CSS</span>
+            </div>
+            <div class="actions">
+              <a class="btn primary" href="#" target="_blank" rel="noopener">OPEN THE TOME ⟶</a>
+              <a class="btn" href="#" target="_blank" rel="noopener">INSPECT THE CRAFT</a>
+            </div>
+          </div>
+          <div class="hero-frame"><img src="images/Chatbot.webp" alt="" /></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="boon-action">
+      <span class="key">↔</span> NAVIGATE
+      <span class="sep">·</span>
+      <span class="key">⏎</span> EQUIP
+      <span class="sep">·</span>
+      <span class="key">Esc</span> BACK
+    </div>
+  </div>
+</section>
+
+<!-- =================== CODEX =================== -->
+<section class="screen scr" data-name="codex">
+  <div class="key-top greek-key"></div>
+  <div class="head">
+    <div class="h">II. <em>The Scion's Codex</em></div>
+    <div class="crumbs">menu <span class="sep">›</span> codex <span class="sep">›</span> chapter i</div>
+  </div>
+  <div class="body">
+    <div class="codex-box">
+      <span class="br"></span>
+      <div class="codex-left">
+        <div class="tag">CHAPTER I · OF THE SCION</div>
+        <h3>Hein Htet Soe, <em>full-stack developer</em> of Bangkok.</h3>
+        <div class="lead">
+          <p>Final-year student at <em>Rangsit University</em>. Builds web apps, mobile apps, and AI tools — with a particular obsession for autonomous agents that take real actions on a user's behalf.</p>
+          <p>Recent work includes <em>Splitr</em> (phone-camera bill splitter on Next.js + Gemini Vision), <em>Stay</em> (Flutter hotel-booking app on Firebase), <em>JobApplier</em> (an engine that finds, tailors and submits job applications), and <em>Oracle</em> (a fully-local voice assistant that wakes on a clap and runs entirely on RTX hardware).</p>
+          <p>Comfortable across TypeScript / Next.js on the web, Flutter / Dart on mobile, Python for the AI layer. <em>Open to freelance, internships, and full-time roles.</em></p>
+        </div>
+        <div class="signature">
+          <div class="by">
+            ❦ Inscribed by his own hand, of <em>Rangsit</em>, in the year <em>MMXXVI</em>.
+            <br>Open to commission, correspondence, and the occasional petition from the upper world.
+          </div>
+          <img class="pomegranate-painted" src="sigils/pomegranate-cluster.webp" alt="" />
+
+        </div>
+      </div>
+      <div class="codex-right">
+        <div class="label">◆ ASPECT · THE CHRONICLER</div>
+        <img class="portrait" src="images/hades/hein-chronicler.webp" alt="" />
+        <div class="name"><em>The Chronicler</em><small>AN ASPECT OF THE SCION</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== CONTRACTS =================== -->
+<section class="screen scr" data-name="contracts">
+  <div class="key-top greek-key"></div>
+  <div class="head">
+    <div class="h">III. <em>House Contracts</em></div>
+    <div class="crumbs">menu <span class="sep">›</span> contracts <span class="sep">›</span> petition the lady of the night</div>
+  </div>
+  <div class="body">
+    <div class="contracts-box">
+      <span class="br"></span>
+      <div class="nyx-side">
+        <div class="qt">
+          Tell me, mortal — what commission would you have wrought? Speak it plain and the work shall begin.
+          <cite>— The Herald, an aspect of the Scion</cite>
+        </div>
+        <img src="images/hades/hein-herald.webp" alt=""/>
+      </div>
+      <div class="form-side">
+        <div class="avail"><span class="dot"></span> AVAILABLE FOR COMMISSION</div>
+        <h3>Petition the <em>House</em></h3>
+        <p class="sub">Speak plain and the work shall begin. <em>Dispatch a raven</em> below, or find me where the souls gather.</p>
+
+        <a class="raven-btn" href="mailto:heinhtetsoe1821@gmail.com?subject=A Petition from the Upper World">
+          <span class="seal" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 7l8 6 8-6"/><path d="M3 6h18v12H3z"/></svg>
+          </span>
+          <span class="seal-text">
+            <span class="lbl">DISPATCH A RAVEN</span>
+            <span class="addr">heinhtetsoe1821@gmail.com</span>
+          </span>
+          <span class="arrow">⟶</span>
+        </a>
+
+        <div class="channels">
+          <a class="channel" href="https://www.linkedin.com/in/hein-htet-soe-2015b334b/" target="_blank" rel="noopener">
+            <span class="ico">in</span>
+            <span class="meta"><span class="k">LINKEDIN</span><span class="v">/hein-htet-soe</span></span>
+          </a>
+          <a class="channel" href="https://github.com/callmeHeinHtet" target="_blank" rel="noopener">
+            <span class="ico">G</span>
+            <span class="meta"><span class="k">GITHUB</span><span class="v">@callmeHeinHtet</span></span>
+          </a>
+          <a class="channel" href="#souls" data-goto="souls">
+            <span class="ico">@</span>
+            <span class="meta"><span class="k">ALL SIGNS</span><span class="v">Souls &amp; Summons →</span></span>
+          </a>
+        </div>
+
+        <p class="hours">Ravens answered within <em>24 hours</em> · Bangkok time · No charge for first counsel.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== MIRROR OF NIGHT (skills) =================== -->
+<section class="screen scr" data-name="mirror">
+  <div class="key-top greek-key"></div>
+  <div class="head">
+    <div class="h">IV. <em>Mirror of Night</em></div>
+    <div class="crumbs">menu <span class="sep">›</span> mirror <span class="sep">›</span> talents</div>
+  </div>
+  <div class="body">
+    <div class="mirror-box">
+      <span class="br"></span>
+
+      <div class="mirror-left" id="mirror-talents">
+        <!-- Talents are populated by JS from the data below -->
+      </div>
+
+      <div class="mirror-right">
+        <img class="mirror-frame-overlay" src="sigils/mirror-frame.webp" alt="" aria-hidden="true" />
+        <div class="tag" id="m-tag">TALENT · WEB</div>
+        <h3 id="m-name">Next.js</h3>
+        <div class="meta">
+          <span>RANK <strong id="m-rank">●●●●○</strong></span>
+          <span>YEARS <strong id="m-years">3</strong></span>
+        </div>
+        <p class="desc" id="m-desc">The cornerstone of every web artefact I forge — server components, routing, and the dark art of the build.</p>
+        <div class="used-label">FORGED INTO</div>
+        <div class="used" id="m-used"><span>Splitr</span><span>Restroflow</span><span>Portfolio</span><span>Skater</span></div>
+        <div class="mirror-totals">
+          <span>TALENTS UNLOCKED <span class="v" id="m-total">19 / 24</span></span>
+          <span>DARKNESS HELD <span class="v">2,400 ✦</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== SITES OF GRACE (journey) =================== -->
+<section class="screen scr" data-name="grace">
+  <div class="key-top greek-key"></div>
+  <div class="head">
+    <div class="h">V. <em>Chronicle of Runs</em></div>
+    <div class="crumbs">menu <span class="sep">›</span> chronicle <span class="sep">›</span> the long way home</div>
+  </div>
+  <div class="body">
+    <div class="grace-box">
+      <span class="br"></span>
+
+      <div class="grace-rail">
+        <article class="grace now">
+          <div class="flame"><img src="sigils/brazier.webp" alt="" /></div>
+          <div class="year">2026<span class="roman">VI · NOW</span></div>
+          <div class="info">
+            <h4>Autonomous <em>Agents</em>, Voice &amp; Shipping</h4>
+            <p>Shipped <em>JobApplier</em> sub-projects 1 + 2 — an engine that finds, tailors and submits applications. Built <em>Oracle</em>, a fully-local voice assistant on RTX hardware. Active freelance work for Pyapon hotel + MSA.</p>
+            <div class="tags"><span>Claude SDK</span><span>Playwright</span><span>RTX-local STT/TTS</span><span>Next.js 16</span></div>
+          </div>
+        </article>
+
+        <article class="grace">
+          <div class="flame"><img src="sigils/brazier.webp" alt="" /></div>
+          <div class="year">2024<span class="roman">V</span></div>
+          <div class="info">
+            <h4>Full-Stack &amp; <em>AI Specialist</em></h4>
+            <p>Final year at Rangsit. Real client work: hotel management for Pyapon, restaurant POS, library chatbot. Specialised in AI automation and intelligent contraptions.</p>
+            <div class="tags"><span>Next.js</span><span>TypeScript</span><span>Gemini</span><span>Prisma</span></div>
+          </div>
+        </article>
+
+        <article class="grace">
+          <div class="flame"><img src="sigils/brazier.webp" alt="" /></div>
+          <div class="year">2023<span class="roman">IV</span></div>
+          <div class="info">
+            <h4>Mobile App <em>Developer</em></h4>
+            <p>Crossed to the mobile plane — built comprehensive Flutter applications anchored to Firebase. Focused on user experience and real-time data sync.</p>
+            <div class="tags"><span>Flutter</span><span>Dart</span><span>Firebase</span></div>
+          </div>
+        </article>
+
+        <article class="grace">
+          <div class="flame"><img src="sigils/brazier.webp" alt="" /></div>
+          <div class="year">2022<span class="roman">III</span></div>
+          <div class="info">
+            <h4><em>Web</em> Developer (self-taught)</h4>
+            <p>Built real-time web applications including currency trackers, task managers. Mastered React and API integration. Began thinking in components.</p>
+            <div class="tags"><span>React</span><span>JavaScript</span><span>APIs</span><span>Node.js</span></div>
+          </div>
+        </article>
+
+        <article class="grace">
+          <div class="flame"><img src="sigils/brazier.webp" alt="" /></div>
+          <div class="year">2021<span class="roman">II</span></div>
+          <div class="info">
+            <h4>Started <em>Coding</em></h4>
+            <p>First line of code. Web development fundamentals. Strong foundation in HTML, CSS, and JavaScript. The first site of grace was lit.</p>
+            <div class="tags"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Git</span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== SOULS & SUMMONS (all socials) =================== -->
+<section class="screen scr" data-name="souls">
+  <div class="key-top greek-key"></div>
+  <div class="head">
+    <div class="h"><em>Souls &amp; Summons</em></div>
+    <div class="crumbs">menu <span class="sep">›</span> contracts <span class="sep">›</span> souls</div>
+  </div>
+  <div class="body">
+    <div class="souls-box">
+      <span class="br"></span>
+      <div class="meg-side">
+        <div class="tag">◆ ASPECT · THE WARDEN</div>
+        <img src="images/hades/hein-warden.webp" alt="" />
+        <div class="nm"><em>The Warden</em><small>GUARDIAN OF THE GATE</small></div>
+      </div>
+      <div class="souls-grid">
+        <a class="soul" href="https://github.com/callmeHeinHtet" target="_blank" rel="noopener">
+          <span class="ico">G</span>
+          <span class="name">GITHUB<span class="sub">@callmeHeinHtet</span></span>
+          <span class="num">I</span>
+        </a>
+        <a class="soul" href="https://www.linkedin.com/in/hein-htet-soe-2015b334b/" target="_blank" rel="noopener">
+          <span class="ico">in</span>
+          <span class="name">LINKEDIN<span class="sub">Hein Htet Soe</span></span>
+          <span class="num">II</span>
+        </a>
+        <a class="soul" href="https://line.me/ti/p/~callmeero81" target="_blank" rel="noopener">
+          <span class="ico">L</span>
+          <span class="name">LINE<span class="sub">@callmeero81</span></span>
+          <span class="num">III</span>
+        </a>
+        <a class="soul" href="mailto:heinhtetsoe1821@gmail.com?subject=A Petition from the Upper World">
+          <span class="ico">@</span>
+          <span class="name">DISPATCH A RAVEN<span class="sub">heinhtetsoe1821@gmail.com</span></span>
+          <span class="num">IV</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== IRIS TRANSITION =================== -->
+<!-- Knife-cut curtain transition: goto() fills these halves with clones of the outgoing screen -->
+<div class="curtain" aria-hidden="true">
+  <div class="half left"></div>
+  <div class="half right"></div>
+  <div class="cut"></div>
+</div>
+
+<!-- =================== CONTROLLER STRIP =================== -->
+<div class="ctrl">
+  <div class="group">
+    <span class="b"><span class="glyph">↑↓</span><span class="lbl">Navigate</span></span>
+    <span class="b"><span class="glyph">⏎</span><span class="lbl">Confirm</span></span>
+    <span class="b act" id="btn-back" hidden><span class="glyph">Esc</span><span class="lbl">Return to Menu</span></span>
+  </div>
+  <div class="group">
+    <span class="b"><span class="glyph">1-4</span><span class="lbl">Quick Select</span></span>
+    <span class="b"><span class="glyph">𝄞</span><span class="lbl">Mute</span></span>
+  </div>
+</div>
+
+<!-- Touch-only Back button (phones / tablets) — shown via @media (hover:none) and (pointer:coarse) -->
+<button class="touch-nav" id="touch-back" type="button" aria-label="Go back" hidden>
+  <span class="arr" aria-hidden="true">‹</span><span>Back</span>
+</button>
+
+<script>
+  // ============== State machine ==============
+  const backBtn = document.getElementById('btn-back');
+  const touchBack = document.getElementById('touch-back');
+
+  function setBackVisibility() {
+    const at = document.body.dataset.screen;
+    const atRoot = (at === 'title' || at === 'boot');
+    backBtn.hidden = atRoot;
+    touchBack.hidden = atRoot;   // touch Back hides on the menu/boot (nothing behind)
+    // Hide the whole controller strip on boot — feels more "splash" that way.
+    document.querySelector('.ctrl').style.display = (at === 'boot') ? 'none' : '';
+  }
+
+  // Context-aware back: close an open boon detail first, else return to the menu.
+  function goBack() {
+    const at = document.body.dataset.screen;
+    if (at === 'boons' && boonOpenIdx !== null) { closeBoon(); return; }
+    if (at !== 'title' && at !== 'boot') goto('title');
+  }
+
+  const curtain = document.querySelector('.curtain');
+  const curtainL = curtain.querySelector('.half.left');
+  const curtainR = curtain.querySelector('.half.right');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let curtainTimer = null;
+
+  function goto(name) {
+    const cur = document.body.dataset.screen;
+    if (cur === name) return;
+    const apply = () => {
+      document.body.dataset.screen = name;
+      setBackVisibility();
+      history.replaceState({screen: name}, '', '#' + name);
+    };
+    const oldScreen = document.querySelector('.screen[data-name="' + cur + '"]');
+    // The knife-cut curtain (clone + drop) is a desktop-only flourish: on phones/
+    // tablets the screens scroll and are tall, so cloning a top-of-viewport snapshot
+    // looks mismatched and janky. There, fall back to the light opacity crossfade.
+    const lightSwap = reduceMotion.matches
+      || window.matchMedia('(max-width: 900px)').matches
+      || window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    if (!oldScreen || lightSwap) { apply(); return; }
+
+    apply();  // swap the real screen underneath; the curtain halves hide it until they fall
+    const cloneHalf = () => {
+      const c = oldScreen.cloneNode(true);
+      c.classList.remove('screen');     // free it from the state-machine opacity rule
+      c.classList.add('clone');
+      c.removeAttribute('data-name');
+      return c;
+    };
+    curtainL.innerHTML = ''; curtainR.innerHTML = '';
+    curtainL.appendChild(cloneHalf());
+    curtainR.appendChild(cloneHalf());
+    if (curtainTimer) clearTimeout(curtainTimer);
+    curtain.classList.remove('active');
+    void curtain.offsetWidth;           // restart the fall animation cleanly
+    curtain.classList.add('active');
+    curtainTimer = setTimeout(() => {
+      curtain.classList.remove('active');
+      curtainL.innerHTML = ''; curtainR.innerHTML = '';
+    }, 820);
+  }
+
+  document.querySelectorAll('[data-goto]').forEach(el => {
+    el.addEventListener('click', e => { e.preventDefault(); goto(el.dataset.goto); });
+  });
+  backBtn.addEventListener('click', goBack);
+  touchBack.addEventListener('click', goBack);
+
+  // ============== BOONS — keyboard + mouse selection + tilt + detail ==============
+  const boonsGrid = document.querySelector('.boons');
+  const boonItems = Array.from(document.querySelectorAll('.boons .boon'));
+  let boonIdx = 0;
+  let boonOpenIdx = null;  // null = no detail open
+
+  function fmtNum(span, v) {
+    const prefix = span.dataset.prefix || '';
+    const suffix = span.dataset.suffix || '';
+    return `${prefix}${v}${suffix}`;
+  }
+  function resetNum(span) {
+    const target = parseFloat(span.dataset.target);
+    if (Number.isFinite(target)) span.textContent = fmtNum(span, target);
+  }
+  function animateNum(span) {
+    const target = parseFloat(span.dataset.target);
+    if (!Number.isFinite(target)) return;
+    span.textContent = fmtNum(span, 0);
+    const start = performance.now();
+    const dur = 600;
+    function tick(t) {
+      const k = Math.min(1, (t - start) / dur);
+      const ease = 1 - Math.pow(1 - k, 3);
+      span.textContent = fmtNum(span, Math.round(target * ease));
+      if (k < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  // On load, show all targets as their final value
+  document.querySelectorAll('.boons .num[data-target]').forEach(resetNum);
+
+  function setBoonFocus(i) {
+    if (boonOpenIdx !== null) return; // don't change focus while a card is open
+    const prev = boonIdx;
+    boonIdx = (i + boonItems.length) % boonItems.length;
+    boonItems.forEach((el, idx) => el.classList.toggle('on', idx === boonIdx));
+    if (prev !== boonIdx) {
+      // reset previously-focused card stats back to target value (no animation)
+      boonItems[prev]?.querySelectorAll('.compact .num[data-target]').forEach(resetNum);
+    }
+    // animate the newly focused card's stats from 0 → target
+    boonItems[boonIdx]?.querySelectorAll('.compact .num[data-target]').forEach(animateNum);
+  }
+  function openBoon(i) {
+    boonOpenIdx = i;
+    boonsGrid.classList.add('has-open');
+    boonItems.forEach((el, idx) => {
+      el.classList.toggle('open', idx === i);
+      el.classList.toggle('on', idx === i);
+    });
+  }
+  function closeBoon() {
+    boonOpenIdx = null;
+    boonsGrid.classList.remove('has-open');
+    boonItems.forEach(el => el.classList.remove('open'));
+  }
+
+  boonItems.forEach((el, i) => {
+    el.addEventListener('mouseenter', () => {
+      if (document.body.dataset.screen === 'boons') setBoonFocus(i);
+    });
+    el.addEventListener('click', () => {
+      if (boonOpenIdx === null) { openBoon(i); }
+      else if (boonOpenIdx !== i) { closeBoon(); requestAnimationFrame(() => openBoon(i)); }
+    });
+    // 3D parallax tilt — driven by mousemove
+    el.addEventListener('mousemove', (e) => {
+      if (el.classList.contains('open')) return;
+      const r = el.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width  - 0.5) * 2;
+      const y = ((e.clientY - r.top ) / r.height - 0.5) * 2;
+      el.style.setProperty('--ry', `${x * 6}deg`);
+      el.style.setProperty('--rx', `${-y * 6}deg`);
+    });
+    el.addEventListener('mouseleave', () => {
+      el.style.setProperty('--ry', '0deg');
+      el.style.setProperty('--rx', '0deg');
+    });
+    // Clicking a button inside the detail shouldn't close the card
+    el.querySelectorAll('.detail .btn').forEach(btn => btn.addEventListener('click', e => e.stopPropagation()));
+  });
+  if (boonItems.length) setBoonFocus(0);
+
+  // ============== TITLE MENU — keyboard + mouse selection ==============
+  const menuItems = Array.from(document.querySelectorAll('.menu a'));
+  let menuIdx = 0;
+  const roman = ['I', 'II', 'III', 'IV', 'V'];
+  const runeTagText = document.querySelector('.rune-tag-text');
+  function setMenuFocus(i) {
+    menuIdx = (i + menuItems.length) % menuItems.length;
+    menuItems.forEach((el, idx) => el.classList.toggle('on', idx === menuIdx));
+    if (runeTagText) runeTagText.textContent = `MAIN MENU · ${roman[menuIdx]} / V`;
+  }
+  // initialise focus on the first item
+  setMenuFocus(0);
+
+  // Mouse: hovering an item moves the selection there
+  menuItems.forEach((el, i) => {
+    el.addEventListener('mouseenter', () => {
+      if (document.body.dataset.screen === 'title') setMenuFocus(i);
+    });
+  });
+
+  // Boot screen: any key / click → enter main menu
+  function bootEnter() {
+    if (document.body.dataset.screen !== 'boot') return;
+    goto('title');
+  }
+  document.querySelector('.boot-screen').addEventListener('click', bootEnter);
+
+  // Single keyboard dispatcher — behaviour depends on current screen
+  document.addEventListener('keydown', e => {
+    const at = document.body.dataset.screen;
+
+    // Boot: any key advances to the main menu
+    if (at === 'boot') {
+      bootEnter();
+      e.preventDefault();
+      return;
+    }
+
+    // Global: B / Esc — close an open boon detail first, otherwise return to title
+    if (e.key === 'Escape' || e.key === 'b' || e.key === 'B') {
+      if (at === 'boons' && boonOpenIdx !== null) { closeBoon(); e.preventDefault(); return; }
+      if (at !== 'title') goto('title');
+      return;
+    }
+
+    if (at === 'title') {
+      // Navigate menu
+      if (e.key === 'ArrowUp'   || e.key === 'w' || e.key === 'W') { setMenuFocus(menuIdx - 1); e.preventDefault(); return; }
+      if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') { setMenuFocus(menuIdx + 1); e.preventDefault(); return; }
+      // Confirm selection (A button / Enter / Space)
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'a' || e.key === 'A') {
+        const tgt = menuItems[menuIdx]?.dataset.goto;
+        if (tgt) goto(tgt);
+        e.preventDefault(); return;
+      }
+      // Optional: number-key quick-jump still works
+      if (e.key === '1') { setMenuFocus(0); }
+      if (e.key === '2') { setMenuFocus(1); }
+      if (e.key === '3') { setMenuFocus(2); }
+      if (e.key === '4') { setMenuFocus(3); }
+      if (e.key === '5') { setMenuFocus(4); }
+    }
+
+    if (at === 'boons') {
+      // If a card is already open, Esc closes it (Esc is handled by the global branch above — but only goes to title).
+      // We override: if open, Esc closes the detail; otherwise it returns to title.
+      // (handled by reordering — see global escape branch)
+      if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp'   || e.key === 'a' || e.key === 'A') { setBoonFocus(boonIdx - 1); e.preventDefault(); return; }
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'd' || e.key === 'D') { setBoonFocus(boonIdx + 1); e.preventDefault(); return; }
+      if (e.key === 'Enter' || e.key === ' ') {
+        if (boonOpenIdx === null) openBoon(boonIdx);
+        e.preventDefault(); return;
+      }
+    }
+  });
+
+  // Restore from hash on load (skip the boot screen if a direct link)
+  const initial = (location.hash || '').replace('#', '');
+  if (['boons','codex','contracts','mirror','grace','souls','title'].includes(initial)) {
+    document.body.dataset.screen = initial;
+  }
+  setBackVisibility();
+
+  // ============== MIRROR OF NIGHT — talents data + interactivity ==============
+  const TALENTS = [
+    { cat: 'WEB',       name: 'Next.js',        rank: 4, years: 3, desc: 'Cornerstone of every web artefact — App Router, server components, the dark art of the build pipeline.', used: ['Splitr','Restroflow','Portfolio','Skater','AungNaingThu'] },
+    { cat: 'WEB',       name: 'React',          rank: 4, years: 4, desc: 'Components, hooks, state machines. The language I think the web in.', used: ['Splitr','Portfolio','Restroflow'] },
+    { cat: 'WEB',       name: 'Tailwind',       rank: 4, years: 3, desc: 'Atomic CSS — fast iteration, no naming agony, plays well with design systems.', used: ['Splitr','Portfolio','Skater'] },
+    { cat: 'WEB',       name: 'GSAP + Lenis',   rank: 3, years: 2, desc: 'Timeline-based animation and buttery smooth scrolling for interactive sites.', used: ['Portfolio'] },
+    { cat: 'WEB',       name: 'Three.js',       rank: 2, years: 1, desc: '3D in the browser. Used sparingly — most sites do not need a planet floating in them.', used: ['Portfolio'] },
+
+    { cat: 'MOBILE',    name: 'Flutter',        rank: 4, years: 2, desc: 'Cross-platform mobile, declarative widgets. Shipped Stay to Firebase Hosting.', used: ['Stay'] },
+    { cat: 'MOBILE',    name: 'Dart',           rank: 4, years: 2, desc: 'Reactive language paired with Flutter; null-safety is friend.', used: ['Stay'] },
+    { cat: 'MOBILE',    name: 'Firebase',       rank: 3, years: 2, desc: 'Auth, Firestore, hosting. Pragmatic backend for prototypes that ship.', used: ['Stay'] },
+
+    { cat: 'AI',        name: 'Claude SDK',     rank: 4, years: 1, desc: 'Subagent-driven systems, tool use, MCP servers. The brain behind JobApplier and Oracle.', used: ['JobApplier','Oracle'] },
+    { cat: 'AI',        name: 'Gemini',         rank: 4, years: 1, desc: 'Vision + Flash + Pro models. Cheap, fast, and very good at structured output.', used: ['Splitr','Chatbot','this mockup'] },
+    { cat: 'AI',        name: 'Local LLMs',     rank: 3, years: 1, desc: 'Faster-whisper STT, Kokoro TTS, llama.cpp. Fully-local voice on RTX hardware.', used: ['Oracle'] },
+    { cat: 'AI',        name: 'Agent design',   rank: 4, years: 1, desc: 'State machines, tool routing, refusal handling, recovery loops. Engines that take real actions.', used: ['JobApplier','Oracle'] },
+
+    { cat: 'LANGUAGES', name: 'TypeScript',     rank: 4, years: 3, desc: 'My web/server first language. Type-driven design and strict configs.', used: ['Splitr','Restroflow','Portfolio'] },
+    { cat: 'LANGUAGES', name: 'Python',         rank: 4, years: 2, desc: 'AI layer + tooling. Pydantic, pytest, uv. The language of agents.', used: ['JobApplier','Oracle'] },
+    { cat: 'LANGUAGES', name: 'JavaScript',     rank: 5, years: 5, desc: 'The vernacular. Where it all started.', used: ['Chatbot','everything'] },
+    { cat: 'LANGUAGES', name: 'SQL',            rank: 3, years: 2, desc: 'Postgres via Prisma, schema design, migrations. Comfortable but not yet a wizard.', used: ['Skater','Restroflow','AungNaingThu'] },
+
+    { cat: 'INFRA',     name: 'Vercel',         rank: 4, years: 2, desc: 'Deploy on git push, edge functions, preview URLs. The lazy default — in the best sense.', used: ['Restroflow','Splitr'] },
+    { cat: 'INFRA',     name: 'Postgres',       rank: 3, years: 2, desc: 'Production database. Docker locally, Neon / Supabase in cloud.', used: ['Restroflow','Skater'] },
+    { cat: 'INFRA',     name: 'Prisma',         rank: 4, years: 2, desc: 'Type-safe ORM. Migrations are first-class. My default DB layer.', used: ['Restroflow','Skater','AungNaingThu'] },
+    { cat: 'INFRA',     name: 'GitHub Actions', rank: 3, years: 1, desc: 'CI for tests and deploys. Still learning the deeper patterns.', used: ['Portfolio'] },
+
+    { cat: 'IN PROGRESS', name: 'Rust',           rank: 1, years: 0, desc: 'Just starting. Reading the book. Curious about cargo and the borrow checker.', used: [] },
+    { cat: 'IN PROGRESS', name: 'Kubernetes',     rank: 1, years: 0, desc: 'On the list. Right now I deploy to Vercel and let the platform handle it.', used: [] },
+    { cat: 'IN PROGRESS', name: 'Go',             rank: 1, years: 0, desc: 'On the list as a second backend language. Loved what little I have written.', used: [] },
+  ];
+
+  // Group by category and render the left list
+  const mirrorLeft = document.getElementById('mirror-talents');
+  if (mirrorLeft) {
+    const cats = {};
+    TALENTS.forEach((t, i) => { (cats[t.cat] ||= []).push({ ...t, _idx: i }); });
+    Object.entries(cats).forEach(([cat, list]) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'mirror-cat';
+      wrap.innerHTML = `<div class="cat-name">${cat}</div><div class="talents"></div>`;
+      const inner = wrap.querySelector('.talents');
+      list.forEach(t => {
+        const a = document.createElement('div');
+        a.className = 'talent';
+        a.dataset.idx = t._idx;
+        const orbs = Array.from({length: 5}, (_, n) => `<i class="${n < t.rank ? 'f' : ''}"></i>`).join('');
+        a.innerHTML = `<span class="name">${t.name}</span><span class="orbs">${orbs}</span>`;
+        inner.appendChild(a);
+      });
+      mirrorLeft.appendChild(wrap);
+    });
+
+    const mTag   = document.getElementById('m-tag');
+    const mName  = document.getElementById('m-name');
+    const mRank  = document.getElementById('m-rank');
+    const mYears = document.getElementById('m-years');
+    const mDesc  = document.getElementById('m-desc');
+    const mUsed  = document.getElementById('m-used');
+    const mTotal = document.getElementById('m-total');
+
+    const allTalents = Array.from(mirrorLeft.querySelectorAll('.talent'));
+    function showTalent(idx) {
+      const t = TALENTS[idx];
+      if (!t) return;
+      allTalents.forEach(el => el.classList.toggle('on', Number(el.dataset.idx) === idx));
+      mTag.textContent = `TALENT · ${t.cat}`;
+      mName.textContent = t.name;
+      mRank.textContent = '●'.repeat(t.rank) + '○'.repeat(5 - t.rank);
+      mYears.textContent = t.years > 0 ? t.years : 'studying';
+      mDesc.textContent = t.desc;
+      mUsed.innerHTML = t.used.length
+        ? t.used.map(u => `<span>${u}</span>`).join('')
+        : '<span style="opacity:.6">— not yet wielded —</span>';
+    }
+    const unlocked = TALENTS.filter(t => t.rank >= 2).length;
+    mTotal.textContent = `${unlocked} / ${TALENTS.length}`;
+
+    allTalents.forEach(el => {
+      el.addEventListener('mouseenter', () => showTalent(Number(el.dataset.idx)));
+      el.addEventListener('click',      () => showTalent(Number(el.dataset.idx)));
+    });
+    showTalent(0); // default selection
+  }
+
+  // ============== Embers (per-canvas) ==============
+  // Lighter particle count + only the active screen's canvas does per-particle
+  // work — off-screen ember fields stay idle, which keeps main-thread work (and
+  // Total Blocking Time) low. Disabled entirely under prefers-reduced-motion.
+  const reduceFx = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('[data-canvas]').forEach(c => {
+    const ctx = c.getContext('2d');
+    const ownerScreen = c.closest('.screen');
+    let W,H,P=[];
+    function resize(){ const r = c.parentElement.getBoundingClientRect(); W=c.width=r.width; H=c.height=r.height; }
+    resize(); addEventListener('resize', resize);
+    for (let i=0;i<26;i++) P.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.5+.4,vy:-(Math.random()*.5+.15),vx:(Math.random()-.5)*.2,a:Math.random()*.55+.25,hue:Math.random()<.7?38:14});
+    (function tick(){
+      requestAnimationFrame(tick);
+      if (reduceFx) return;
+      if (ownerScreen && ownerScreen.dataset.name !== document.body.dataset.screen) return;
+      ctx.clearRect(0,0,W,H);
+      P.forEach(p=>{
+        p.x+=p.vx;p.y+=p.vy; if(p.y<-10){p.y=H+10;p.x=Math.random()*W}
+        const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*6);
+        g.addColorStop(0,`hsla(${p.hue},85%,60%,${p.a})`); g.addColorStop(1,`hsla(${p.hue},85%,60%,0)`);
+        ctx.fillStyle=g; ctx.beginPath();ctx.arc(p.x,p.y,p.r*6,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle=`hsla(${p.hue},90%,75%,${p.a*1.2})`; ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
+      });
+    })();
+  });
+</script>
+</body>
+</html>
