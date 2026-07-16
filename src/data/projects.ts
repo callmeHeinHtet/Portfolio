@@ -72,6 +72,49 @@ export const projects: Project[] = [
     ],
   },
   {
+    title: 'RestroFlow',
+    description:
+      'The live POS for a hotel restaurant and its KTV rooms — orders, hourly karaoke billing, and meals charged straight to a guest\'s room folio.',
+    longDescription:
+      "A point-of-sale system running a dining floor and an attached KTV (karaoke) operation in Myanmar, wired into the hotel PMS next door so a guest can eat now and settle at checkout. Two systems moving the same money is where the difficulty lives: a charge must never post twice, a slow POS must never stall a hotel checkout, and a waiter on a dropped connection must still be able to take an order. Most of the design below is about what happens when something fails, not when it works.",
+    image: 'images/RestroFlow.webp',
+    tags: [
+      'Production System',
+      'Systems Integration',
+      'Idempotency',
+      'Offline-First',
+      'RBAC',
+    ],
+    technologies: [
+      'Next.js 16',
+      'React 19',
+      'TypeScript',
+      'Prisma 6',
+      'PostgreSQL (Neon)',
+      'Upstash Redis',
+      'IndexedDB',
+      'Vercel',
+    ],
+    features: [
+      'Charges post to the hotel folio idempotently. Every post carries the order\'s own identity as an externalRef; the hotel dedupes on it and answers deduped: true if it has seen it before. A double-click, a retry, or an offline replay can never bill a guest twice for the same meal. Verified against the live contract end-to-end — 17/17 assertions, including the same ref twice leaving exactly one charge row.',
+      'Settlement runs in reverse, automatically. When the hotel marks a booking checked out it calls back into the POS to flip every room charge on that booking to settled. The call is fire-and-forget on a 5s timeout, so a POS that is slow or down can never delay or fail a guest checkout — and a manual settle endpoint stays as the fallback for charges posted while the callback was unavailable.',
+      'Offline order-taking with an IndexedDB write outbox. Orders and payments taken without a connection queue locally and replay FIFO on reconnect; the operation id doubles as the idempotency key, so the create endpoint returns the existing order unchanged if that id already landed. No external sync library — the whole thing is a few hundred lines.',
+      'Five roles (admin / manager / waiter / kitchen / KTV) enforced at three independent layers — middleware redirects, per-handler session checks, and UI gating — plus constant-time PIN comparison with per-IP lockout on the KTV room pads, Upstash-backed rate limiting, and an append-only audit log on every sensitive mutation.',
+    ],
+    link: 'https://restroflow-mu.vercel.app',
+    category: 'fullstack',
+    status: 'completed',
+    accent: '#C2703F',
+    panelBg: '#F2EAE1',
+    aspect: 'desktop',
+    metrics: [
+      { label: 'YEAR', value: '2026' },
+      { label: 'ROLES', value: '05' },
+      { label: 'CONTRACT', value: '17/17' },
+      { label: 'STATUS', value: 'LIVE' },
+    ],
+  },
+  {
     title: 'Scion of the Underworld',
     description:
       'My portfolio reimagined as a Hades-style game menu — navigate Boons, Codex, and Contracts like a Supergiant roguelite main menu.',
