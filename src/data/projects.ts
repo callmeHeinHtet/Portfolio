@@ -28,6 +28,53 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    title: 'Aung Naing Thu Hotel',
+    description:
+      'The live property-management system for a 47-room hotel in Pyapon, Myanmar — booking, folio billing, and operations, running in production on real money.',
+    longDescription:
+      "A full PMS I built and still operate: public booking site, staff admin, and the billing engine behind a 47-room hotel. It takes real reservations, bills in MMK, and holds real guest records, so the interesting work has been correctness, cost, and security rather than features. The bugs that mattered were the quiet ones — a booking page that silently offered almost no rooms while the hotel was nearly full, and a pricing model that had been over-billing a third of the guest list without anyone noticing. Both were found by going looking, not by a bug report.",
+    image: 'images/ANT.webp',
+    tags: [
+      'Production System',
+      'Real Revenue',
+      'Billing Correctness',
+      'Security Hardening',
+      'Cost Engineering',
+    ],
+    technologies: [
+      'Next.js 14',
+      'TypeScript',
+      'Prisma',
+      'PostgreSQL (Supabase)',
+      'Upstash Redis',
+      'Vercel',
+      'Tailwind CSS',
+      'GitHub Actions',
+    ],
+    features: [
+      'Found the booking page offering ~1 room on every future date while the hotel sat 46/47 full — availability was computed client-side from an admin-only endpoint that returned 401, so it silently fell back to today\'s room status. Moved server-side; verified 1 room tonight / 47 on future dates.',
+      'Date-effective per-night pricing: a RoomRate history table bills each night at the rate in force that night, so a price rise never reaches an existing guest. Swept all 47 live bookings on release and corrected 23 that had been over-billed — 690,000 MMK.',
+      'Cut database egress ~99%. The admin dashboard re-pulled every booking (~1 MB) every 60s per open tab, roughly 30 GB/month, which blew the hosting quota. Replaced the poll with a 30-byte change-token endpoint and reload only when the token moves — same UI behaviour, near-zero idle cost.',
+      'Hardened through two self-run pentests: closed unauthenticated data-leak endpoints, an X-Forwarded-For rate-limit bypass, and guest enumeration on booking lookup. Rate-limit state moved to Upstash Redis so it survives serverless cold starts, fail-open so a cache outage can never block a booking.',
+      'Nightly encrypted backups — pg_dump → gzip → gpg AES256 → 30-day retention, with a tested restore runbook and a documented escape hatch to a plain Docker host.',
+      'Bidirectional POS integration: restaurant and KTV charges post straight to a guest\'s room folio and auto-settle at checkout. Live since June 2026.',
+      'Bilingual EN/MY, MMK throughout, and foreigner pricing decoupled from local rates so either can move without touching the other.',
+    ],
+    link: 'https://aung-naing-thu.vercel.app',
+    demo: 'https://aung-naing-thu.vercel.app',
+    category: 'fullstack',
+    status: 'completed',
+    accent: '#8C4A2F',
+    panelBg: '#F5EFE6',
+    aspect: 'desktop',
+    metrics: [
+      { label: 'ROOMS', value: '47' },
+      { label: 'EGRESS', value: '-99%' },
+      { label: 'OVERBILLED FIXED', value: '23' },
+      { label: 'STATUS', value: 'LIVE' },
+    ],
+  },
+  {
     title: 'Scion of the Underworld',
     description:
       'My portfolio reimagined as a Hades-style game menu — navigate Boons, Codex, and Contracts like a Supergiant roguelite main menu.',
