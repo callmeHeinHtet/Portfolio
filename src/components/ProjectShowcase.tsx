@@ -6,6 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Image } from '@/components/Image'
 import { Project } from '@/data/projects'
 import PhonePreviewModal from '@/components/PhonePreviewModal'
+import CaseStudyModal from '@/components/CaseStudyModal'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -27,19 +28,31 @@ interface ProjectCardProps {
   index: number
   total: number
   onPreview?: () => void
+  onOpenCase?: () => void
 }
 
-const ProjectCard = ({ project, index, total, onPreview }: ProjectCardProps) => {
+const ProjectCard = ({ project, index, total, onPreview, onOpenCase }: ProjectCardProps) => {
   const number = (index + 1).toString().padStart(3, '0')
   const totalStr = total.toString().padStart(3, '0')
   const accent = project.accent ?? DEFAULT_ACCENT
   const panelBg = project.panelBg ?? DEFAULT_PANEL_BG
   const isMirrored = index % 2 === 1
   const isDesktopShot = project.aspect === 'desktop'
+  // A project with a write-up and screenshots opens its case study instead of bouncing
+  // the visitor to the live site. That matters most for the production systems: their
+  // interesting screens sit behind a staff login, so "visit the site" shows a stranger
+  // nothing. The full write-up and the engineering decisions also render nowhere else —
+  // the card clamps longDescription to 4 lines and never showed `features` at all.
+  const hasCaseStudy = Boolean(project.gallery?.length && project.features?.length)
   // Phone-aspect projects open in an in-page phone preview modal so casual
   // viewers see them framed as a phone instead of a stretched desktop site.
-  const opensInPhonePreview = !isDesktopShot && Boolean(onPreview)
-  const ctaLabel = opensInPhonePreview ? 'PREVIEW IN PHONE' : 'VIEW PROJECT'
+  const opensInPhonePreview = !hasCaseStudy && !isDesktopShot && Boolean(onPreview)
+  const opensCaseStudy = hasCaseStudy && Boolean(onOpenCase)
+  const ctaLabel = opensCaseStudy
+    ? 'READ CASE STUDY'
+    : opensInPhonePreview
+      ? 'PREVIEW IN PHONE'
+      : 'VIEW PROJECT'
 
   // Phone shots use a tall 9:19 frame at 280px wide.
   // Desktop shots use a 16:10 frame at 520px wide so they read as full sites.
@@ -159,7 +172,16 @@ const ProjectCard = ({ project, index, total, onPreview }: ProjectCardProps) => 
 
   return (
     <div className="project-feature">
-      {opensInPhonePreview ? (
+      {opensCaseStudy ? (
+        <button
+          type="button"
+          onClick={onOpenCase}
+          className="group block w-full text-left cursor-pointer"
+          aria-label={`Read the ${project.title} case study`}
+        >
+          {cardInner}
+        </button>
+      ) : opensInPhonePreview ? (
         <button
           type="button"
           onClick={onPreview}
@@ -185,6 +207,7 @@ const ProjectCard = ({ project, index, total, onPreview }: ProjectCardProps) => 
 const ProjectShowcase = ({ projects }: ProjectShowcaseProps) => {
   const sectionRef = useRef<HTMLDivElement>(null)
   const [previewProject, setPreviewProject] = useState<Project | null>(null)
+  const [caseProject, setCaseProject] = useState<Project | null>(null)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -214,6 +237,7 @@ const ProjectShowcase = ({ projects }: ProjectShowcaseProps) => {
             index={index}
             total={projects.length}
             onPreview={() => setPreviewProject(project)}
+            onOpenCase={() => setCaseProject(project)}
           />
         ))}
       </div>
@@ -224,6 +248,10 @@ const ProjectShowcase = ({ projects }: ProjectShowcaseProps) => {
           title={previewProject.title}
           onClose={() => setPreviewProject(null)}
         />
+      )}
+
+      {caseProject && (
+        <CaseStudyModal project={caseProject} onClose={() => setCaseProject(null)} />
       )}
 
       {/* View All CTA */}

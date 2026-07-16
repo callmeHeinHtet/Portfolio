@@ -4,6 +4,15 @@ export interface ProjectMetric {
   value: string;
 }
 
+/** A screenshot from inside the app, for the case-study modal. */
+export interface ProjectShot {
+  src: string;
+  /** Short button label for the gallery switcher. */
+  label: string;
+  /** Sentence shown under the image. */
+  caption: string;
+}
+
 export interface Project {
   title: string;
   description: string;
@@ -20,6 +29,13 @@ export interface Project {
   accent?: string;
   panelBg?: string;
   metrics?: ProjectMetric[];
+  /**
+   * Screenshots from inside the app, shown in the case-study modal. For the production
+   * systems the interesting screens sit behind a staff login, so a visitor can never see
+   * them — these are captured from a local instance seeded with invented data. Never
+   * screenshot the live instances: they hold real guest names and real revenue.
+   */
+  gallery?: ProjectShot[];
   // Frame shape for the showcase preview. Defaults to 'phone' (portrait
   // mobile screenshot in a 9:19 frame). Use 'desktop' for landscape web
   // screenshots — they get a 16:10 frame at a larger max-width.
@@ -70,6 +86,20 @@ export const projects: Project[] = [
       { label: 'EGRESS', value: '-99%' },
       { label: 'STATUS', value: 'LIVE' },
     ],
+    // Public flow only. The staff admin — where most of the work is — holds real guest
+    // names, phone numbers and NRC numbers, so it is deliberately not shown.
+    gallery: [
+      {
+        src: 'images/ANT.webp',
+        label: 'Home',
+        caption: 'Public site — the booking front door for a 47-room hotel in Pyapon, bilingual EN/Burmese.',
+      },
+      {
+        src: 'images/ant-booking.webp',
+        label: 'Booking',
+        caption: 'Four-step booking wizard. Availability is resolved server-side per date range, so what a guest is offered is what the database can actually sell.',
+      },
+    ],
   },
   {
     title: 'RestroFlow',
@@ -108,6 +138,30 @@ export const projects: Project[] = [
     accent: '#C2703F',
     panelBg: '#F2EAE1',
     aspect: 'desktop',
+    // Captured from a local instance seeded with invented orders and guest names —
+    // the live POS holds the restaurant's real trading data.
+    gallery: [
+      {
+        src: 'images/rf-pos.webp',
+        label: 'POS',
+        caption: 'Waiter POS — the floor at a glance: 9 tables in use, 3 free, each showing seats and open orders. One tap opens a table.',
+      },
+      {
+        src: 'images/rf-kitchen.webp',
+        label: 'Kitchen',
+        caption: 'Kitchen display — live tickets per table with the waiter who took them, item counts, and a running wait timer. Cooks never touch a keyboard.',
+      },
+      {
+        src: 'images/rf-dashboard.webp',
+        label: 'Dashboard',
+        caption: 'Owner dashboard — takings, average order value, hourly revenue and the day\'s top sellers, all in MMK.',
+      },
+      {
+        src: 'images/rf-ktv.webp',
+        label: 'KTV',
+        caption: 'KTV room pad — guests enter a room PIN to open a tab and order without a waiter. PIN check is constant-time with a per-IP lockout.',
+      },
+    ],
     metrics: [
       { label: 'YEAR', value: '2026' },
       { label: 'ROLES', value: '05' },
