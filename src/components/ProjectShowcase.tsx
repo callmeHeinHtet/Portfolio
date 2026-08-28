@@ -18,6 +18,7 @@ const DEFAULT_ACCENT = '#C44A1F'
 const DEFAULT_PANEL_BG = '#F0EBDD'
 
 const CATEGORY_LABELS: Record<Project['category'], string> = {
+  ai: 'AI',
   frontend: 'FRONTEND',
   fullstack: 'FULL STACK',
   mobile: 'MOBILE',
@@ -28,6 +29,7 @@ const CATEGORY_OPTIONS: Array<{
   label: string
 }> = [
   { value: 'fullstack', label: 'Full Stack' },
+  { value: 'ai', label: 'AI' },
   { value: 'mobile', label: 'Mobile' },
   { value: 'frontend', label: 'Frontend' },
 ]

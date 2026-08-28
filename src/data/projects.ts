@@ -24,7 +24,7 @@ export interface Project {
   link: string;
   demo?: string;
   github?: string;
-  category: 'frontend' | 'fullstack' | 'mobile';
+  category: 'frontend' | 'fullstack' | 'mobile' | 'ai';
   status: 'completed' | 'in-progress' | 'concept';
   accent?: string;
   panelBg?: string;
@@ -254,7 +254,7 @@ export const projects: Project[] = [
     link: 'https://chatbot-omega-ecru-39.vercel.app',
     demo: 'https://chatbot-omega-ecru-39.vercel.app',
     github: 'https://github.com/callmeHeinHtet/Chatbot',
-    category: 'fullstack',
+    category: 'ai',
     status: 'completed',
     accent: '#EC1E79',
     panelBg: '#FFFAF2',
