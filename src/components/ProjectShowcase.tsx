@@ -23,6 +23,15 @@ const CATEGORY_LABELS: Record<Project['category'], string> = {
   mobile: 'MOBILE',
 }
 
+const CATEGORY_OPTIONS: Array<{
+  value: Project['category']
+  label: string
+}> = [
+  { value: 'fullstack', label: 'Full Stack' },
+  { value: 'mobile', label: 'Mobile' },
+  { value: 'frontend', label: 'Frontend' },
+]
+
 interface ProjectCardProps {
   project: Project
   index: number
@@ -206,36 +215,79 @@ const ProjectCard = ({ project, index, total, onPreview, onOpenCase }: ProjectCa
 
 const ProjectShowcase = ({ projects }: ProjectShowcaseProps) => {
   const sectionRef = useRef<HTMLDivElement>(null)
+  const hasAnimatedInitialCategory = useRef(false)
+  const [activeCategory, setActiveCategory] = useState<Project['category']>('fullstack')
   const [previewProject, setPreviewProject] = useState<Project | null>(null)
   const [caseProject, setCaseProject] = useState<Project | null>(null)
+  const visibleProjects = projects.filter((project) => project.category === activeCategory)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from('.project-feature', {
+      const animation: gsap.TweenVars = {
         y: 80,
         opacity: 0,
         duration: 1,
         stagger: 0.2,
         ease: 'expo.out',
-        scrollTrigger: {
+      }
+
+      if (!hasAnimatedInitialCategory.current) {
+        animation.scrollTrigger = {
           trigger: '.project-feature',
           start: 'top 85%',
-        },
-      })
+        }
+        hasAnimatedInitialCategory.current = true
+      }
+
+      gsap.from('.project-feature', animation)
     }, sectionRef)
 
     return () => ctx.revert()
-  }, [])
+  }, [activeCategory])
 
   return (
     <div ref={sectionRef}>
-      <div className="space-y-12 md:space-y-16">
-        {projects.map((project, index) => (
+      <div
+        role="tablist"
+        aria-label="Filter projects by category"
+        className="mb-10 flex max-w-full gap-2 overflow-x-auto pb-2 md:mb-14 md:gap-3"
+      >
+        {CATEGORY_OPTIONS.map((category) => {
+          const isActive = activeCategory === category.value
+
+          return (
+            <button
+              key={category.value}
+              id={`project-category-${category.value}`}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              aria-controls="project-category-panel"
+              onClick={() => setActiveCategory(category.value)}
+              className={`min-h-11 shrink-0 border-2 px-5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-[2px] transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-flame focus-visible:ring-offset-2 focus-visible:ring-offset-cream md:px-7 ${
+                isActive
+                  ? 'border-ink bg-ink text-cream'
+                  : 'border-ink/25 bg-transparent text-ink/65 hover:border-ink hover:text-ink'
+              }`}
+            >
+              {category.label}
+            </button>
+          )
+        })}
+      </div>
+
+      <div
+        id="project-category-panel"
+        role="tabpanel"
+        aria-labelledby={`project-category-${activeCategory}`}
+        className="space-y-12 md:space-y-16"
+      >
+        {visibleProjects.map((project, index) => (
           <ProjectCard
             key={project.title}
             project={project}
             index={index}
-            total={projects.length}
+            total={visibleProjects.length}
             onPreview={() => setPreviewProject(project)}
             onOpenCase={() => setCaseProject(project)}
           />
